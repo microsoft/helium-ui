@@ -77,11 +77,19 @@ class App extends React.Component {
     return (
       <div>
         <h3>Movies</h3>
-        <li>
-          {this.state.movies.map(item =>(
-            <li>{item.title}</li>
-          ))}
-        </li>
+        <div>
+         {
+            this.state.movies.map((item) => { return (
+              <ExpansionPanel>
+                <ExpansionPanelSummary>{item.title}</ExpansionPanelSummary>
+                <ExpansionPanelDetails>{"Movie ID: " + item.movieId}</ExpansionPanelDetails>
+                <ExpansionPanelDetails>{"Year: " + item.year}</ExpansionPanelDetails>
+                <ExpansionPanelDetails>{"Runtime: " + item.runtime}</ExpansionPanelDetails>
+                <ExpansionPanelDetails>{"Genres: " + item.genres}</ExpansionPanelDetails>  
+              </ExpansionPanel>
+            )})
+         }
+        </div>
       </div>
     );
   }
