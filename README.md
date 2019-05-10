@@ -2,7 +2,23 @@
 
 Work In Progress
 
-# Contributing
+## Getting Started
+
+1. [Install Yarn](https://yarnpkg.com/en/docs/install#mac-stable)
+2. Install dependencies
+```
+npm install
+```
+3. Build js from ts
+```
+npm run condig
+```
+4. Start Development Server
+```
+npm start
+```
+
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
