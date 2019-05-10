@@ -1,13 +1,35 @@
 import React, { Component } from 'react';
 import axios from "axios";
-import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core';
+import { 
+  AppBar,
+  Card,
+  CardContent,
+  CardMedia,
+  ExpansionPanel, 
+  ExpansionPanelSummary, 
+  ExpansionPanelDetails, 
+  Grid,
+  Toolbar,
+  Typography,
+} from '@material-ui/core';
+import CameraIcon  from '@material-ui/icons/PhotoCamera';
 import './App.css';
-
+import { withStyles } from '@material-ui/core/styles';
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
 
-class App extends React.Component {
+const divStyle = {
+  color: 'blue',
+  backgroundColor: 'blue',
+};
 
+const cardStyle = {
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+}
+
+class App extends React.Component {
   state = {
     genres: [{ 
       id: null, 
@@ -26,6 +48,13 @@ class App extends React.Component {
       id: null, 
       name: null
     }],
+  }
+
+  joinStr(list: string[]): string {
+    if (list) {
+      return list.join(', ')
+    }
+    return ''
   }
 
   componentDidMount() {
@@ -75,22 +104,45 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <h3>Movies</h3>
-        <div>
-         {
-            this.state.movies.map((item) => { return (
-              <ExpansionPanel>
-                <ExpansionPanelSummary>{item.title}</ExpansionPanelSummary>
-                <ExpansionPanelDetails>{"Movie ID: " + item.movieId}</ExpansionPanelDetails>
-                <ExpansionPanelDetails>{"Year: " + item.year}</ExpansionPanelDetails>
-                <ExpansionPanelDetails>{"Runtime: " + item.runtime}</ExpansionPanelDetails>
-                <ExpansionPanelDetails>{"Genres: " + item.genres}</ExpansionPanelDetails>  
-              </ExpansionPanel>
-            )})
-         }
-        </div>
-      </div>
+      <React.Fragment>
+      <AppBar position="static">
+        <Toolbar>
+          <CameraIcon />
+          <Typography variant="h6" color="inherit" noWrap>
+            Helium UI
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <main>
+      <Grid container spacing={8}>           
+          {this.state.movies.map(item => (
+            <Grid item sm={6} md={4} lg={3}>
+            <Card>
+              <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {item.title}
+                  </Typography>
+                  <Typography>
+                    Year: {item.year}<br />
+                    Runtime: {item.runtime}min <br />
+                    Genres: {this.joinStr(item.genres)}<br />
+                  </Typography>
+                </CardContent>
+              </Card>
+              </Grid>
+          ))}
+
+        </Grid>
+      </main>
+      <footer>
+        <Typography variant="h6" align="center" gutterBottom>
+          Footer
+        </Typography>
+        <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
+          Fill me in later
+        </Typography>
+      </footer>
+      </React.Fragment>
     );
   }
 }
