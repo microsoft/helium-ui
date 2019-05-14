@@ -58,8 +58,8 @@ const cardStyle = {
 class App extends React.Component {
   state: IState;
 
-  constructor(props: IProps) {
-    super(props);
+  constructor() {
+    super([]);
     this.state = { 
       movies: [],
       genres: [],
