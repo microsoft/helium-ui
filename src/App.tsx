@@ -43,10 +43,6 @@ const divStyle = {
   backgroundColor: 'blue',
 };
 
-interface IProps {
-  superhero: string;
-}
-
 interface IState {
   movies: Movie[];
   genres: Genre[];
