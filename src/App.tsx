@@ -25,6 +25,7 @@ type Movie = {
   year: string, 
   runtime: number,
   genres: string[], 
+  roles: string[],
 }
 
 type Genre = {
@@ -56,16 +57,11 @@ const cardStyle = {
 }
 
 class App extends React.Component {
-  state: IState;
-
-  constructor() {
-    super([]);
-    this.state = { 
-      movies: [],
-      genres: [],
-      actors: [],
-    };
-  }
+  state: IState = { 
+    movies: [],
+    genres: [],
+    actors: [],
+  };
 
   joinStr(list: string[]): string {
     if (list) {
@@ -78,10 +74,7 @@ class App extends React.Component {
 
     // grab genre data from api
     axios.get(cors + heliumApi + 'genres').then(response => {
-      const genreData = response.data.map((item: any) => ({
-        id: item.id,
-        name: item.genre
-      }))
+      const genreData: Genre[] = response.data
       this.setState({
         genres: genreData
       })
@@ -89,15 +82,7 @@ class App extends React.Component {
 
     // grab movie data from api
     axios.get(cors + heliumApi + 'movies').then(response => {
-      const moviesData = response.data.map((item: any) => ({
-        movieId: item.movieId,
-        type: item.type,
-        title: item.title,
-        year: item.year,
-        runtime: item.runtime,
-        genres: item.genres,
-        roles: item.roles
-      }))
+      const moviesData: Movie[] = response.data
       this.setState({
         movies: moviesData
       })
@@ -105,10 +90,7 @@ class App extends React.Component {
 
     // grab actor data from api
     axios.get(cors + heliumApi + 'actors').then(response => {
-      const actorsData = response.data.map((item: any) => ({
-        id: item.id,
-        name: item.name
-      }))
+      const actorsData: Actor[] = response.data
       this.setState({
         actors: actorsData
       })
