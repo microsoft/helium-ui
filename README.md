@@ -4,7 +4,7 @@ Work In Progress
 
 ## Getting Started
 
-1. [Install Yarn](https://yarnpkg.com/en/docs/install#mac-stable)
+1. Install NodeJS
 2. Install dependencies
 ```
 npm install
