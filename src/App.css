@@ -8,6 +8,11 @@
   pointer-events: none;
 }
 
+.addFAB {
+  margin: 40px;
+  border: 5px dotted pink;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import axios from "axios";
 import Balloon from "./imgs/balloon.svg"
-import Add from "./imgs/add.png"
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon  from '@material-ui/icons/Search';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { 
   AppBar,
   Card,
@@ -15,6 +16,16 @@ import {
   Typography,
   CardHeader,
   IconButton,
+  MenuItem,
+  Menu,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  TextField,
+  Fab,
 } from '@material-ui/core';
 import './App.css';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
@@ -48,6 +59,8 @@ interface IState {
   movies: Movie[];
   genres: Genre[];
   actors: Actor[];
+  anchorEl: any,
+  formsDialog: any,
 }
 
 class App extends React.Component {
@@ -55,6 +68,8 @@ class App extends React.Component {
     movies: [],
     genres: [],
     actors: [],
+    anchorEl: '',
+    formsDialog: false,
   };
 
   joinStr(list: string[]): string {
@@ -95,13 +110,32 @@ class App extends React.Component {
     });
   }
 
-  cardClick() {
+  cardClick(e: any) {
     console.log(" card clicked")
+    // e.preventDefault();
+    // // perform delete request of new sample movie to axios
+    // axios.delete(cors + heliumApi + 'movies', {newMovie})
+    //   .then(response => {
+    //     console.log(response.data);
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //   })
   }
 
-  addBtnClick(e: any) {
+  // when add icon is clicked, new forms dialog opens
+  formsOpen = (event:any) => {
+    this.setState({ formsDialog: true });
+  };
 
-    e.preventDefault();
+  // close form dialog
+  formsClose = (event: any) => {
+    this.setState({ formsDialog: false });
+  }
+
+  // submit forms 
+  formsSubmit(event: any) {
+    event.preventDefault();
 
     const newMovie = {
       genres: [],
@@ -115,26 +149,107 @@ class App extends React.Component {
       year: 1994,
     }
 
+    alert("new movie added!")
     // submits post request of new sample movie to axios
     axios.post(cors + heliumApi + 'movies', newMovie)
-      .then(response => console.log(response.data))
-      .catch(error => {console.log(error.response)})
+    .then(response => console.log(response.data))
+    .catch(error => {console.log(error.response)})
   }
 
-  render() {
+  deleteMovie() {
+    console.log("delete movie")
+  }
+
+  // menu item on cards
+  handleClick = (event:any) => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  // menu item on cards
+  handleClose() {
+    console.log("handle close")
+    this.setState({ anchorEl: null });
+  }
+
+  render() { 
+    const { anchorEl } = this.state;
 
     return (
       <React.Fragment>
       <AppBar position="sticky">
         <Toolbar>
-          <img src={Balloon} width="60" height="60" />
+          <img src={Balloon} width="50" height="50" />
           <Typography variant="h6" color="inherit" noWrap>
             Helium UI
           </Typography>
-          <img src={Add} onClick={this.addBtnClick} />
+          {/* <img src={Add} onClick={this.addBtnClick} /> */}
+          <Dialog
+            
+            open={this.state.formsDialog}
+            onClose={this.formsClose}
+            aria-labelledby="form-dialog-title"
+          >
+            <DialogTitle id="form-dialog-title">Add New Movie</DialogTitle>
+            <DialogContent>
+              <DialogContentText>Add new movie to list of movies</DialogContentText> 
+              <TextField 
+                autoFocus
+                margin="dense"
+                id="genres"
+                label="Genres"
+                fullWidth
+              />
+              <TextField 
+                label="ID"
+                fullWidth
+              />
+              <TextField 
+                label="Move ID"
+                fullWidth
+              />
+              <TextField 
+                label="Roles"
+                fullWidth
+              />
+              <TextField 
+                label="RunTime"
+                fullWidth
+              />
+              <TextField
+                fullWidth 
+                label="Text Search"
+              />  
+              <TextField 
+                fullWidth
+                label="Title"
+                placeholder="Test Movie"
+              />  
+              <TextField 
+                fullWidth
+                label="Type"
+                value="movie"
+              />  
+              <TextField 
+                fullWidth
+                label="Year"
+              />              
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.formsClose} color="primary">Cancel</Button>
+              <Button onClick={this.formsSubmit} color="primary">Submit</Button>
+            </DialogActions>
+          </Dialog>
         </Toolbar>
       </AppBar>
       <main>
+      <div>
+        <Fab className="addFAB" aria-label="addMovie" onClick={this.formsOpen} color="primary" >
+          <AddIcon />
+        </Fab>
+        <Fab aria-label="deleteMovie" color="secondary" className="deleteFAB">
+          <DeleteIcon/>
+        </Fab>
+      </div>
       <Grid container spacing={8}>           
           {this.state.movies.map((item, i) => (
             <Grid item key={i} sm={6} md={4} lg={3}>
@@ -142,8 +257,21 @@ class App extends React.Component {
                 <CardHeader 
                   title = {item.title}
                   action = {
-                    <IconButton>
-                      <MoreVertIcon/>
+                    <IconButton 
+                      onClick={this.handleClick}
+                      aria-owns={anchorEl ? 'cardMenu' : undefined}
+                      aria-haspopup="true"
+                    >
+                      <MoreVertIcon />
+                      <Menu
+                        id="cardMenu"
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={this.handleClose}  
+                      >
+                        <MenuItem onClick={this.deleteMovie}>Delete</MenuItem>
+                        <MenuItem>Another Item</MenuItem>
+                      </Menu>
                     </IconButton>
                   }
                 />
