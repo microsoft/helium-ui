@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import axios from "axios";
 import Balloon from "./imgs/balloon.svg"
+import Add from "./imgs/add.png"
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import SearchIcon  from '@material-ui/icons/Search';
 import { 
   AppBar,
   Card,
@@ -10,11 +13,12 @@ import {
   InputBase,
   Toolbar,
   Typography,
+  CardHeader,
+  IconButton,
 } from '@material-ui/core';
-import CameraIcon  from '@material-ui/icons/PhotoCamera';
-import SearchIcon  from '@material-ui/icons/Search';
 import './App.css';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { ifStatement } from '@babel/types';
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -22,7 +26,8 @@ const cors = 'https://cors-anywhere.herokuapp.com/';
 type Movie = {
   movieId: string,
   type: string, 
-  title: string, 
+  title: string,
+  textSearch: string, 
   year: string, 
   runtime: number,
   genres: string[], 
@@ -39,22 +44,10 @@ type Actor = {
   name: string,
 }
 
-
-const divStyle = {
-  color: 'blue',
-  backgroundColor: 'blue',
-};
-
 interface IState {
   movies: Movie[];
   genres: Genre[];
   actors: Actor[];
-}
-
-const cardStyle = {
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
 }
 
 class App extends React.Component {
@@ -102,27 +95,59 @@ class App extends React.Component {
     });
   }
 
+  cardClick() {
+    console.log(" card clicked")
+  }
+
+  addBtnClick(e: any) {
+
+    e.preventDefault();
+
+    const newMovie = {
+      genres: [],
+      id: "12345",
+      movieId: "54312",
+      roles: [],
+      runtime: 120,
+      textSearch: "test movie",
+      title: "test movie",
+      type: "Movie",
+      year: 1994,
+    }
+
+    // submits post request of new sample movie to axios
+    axios.post(cors + heliumApi + 'movies', newMovie)
+      .then(response => console.log(response.data))
+      .catch(error => {console.log(error.response)})
+  }
+
   render() {
 
     return (
       <React.Fragment>
       <AppBar position="sticky">
         <Toolbar>
-        <img src={Balloon} width="60" height="60" />
+          <img src={Balloon} width="60" height="60" />
           <Typography variant="h6" color="inherit" noWrap>
             Helium UI
           </Typography>
+          <img src={Add} onClick={this.addBtnClick} />
         </Toolbar>
       </AppBar>
       <main>
       <Grid container spacing={8}>           
           {this.state.movies.map((item, i) => (
             <Grid item key={i} sm={6} md={4} lg={3}>
-            <Card>
-              <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {item.title}
-                  </Typography>
+              <Card className={item.title} onClick={this.cardClick}>
+                <CardHeader 
+                  title = {item.title}
+                  action = {
+                    <IconButton>
+                      <MoreVertIcon/>
+                    </IconButton>
+                  }
+                />
+                <CardContent>
                   <Typography>
                     Year: {item.year}<br />
                     Runtime: {item.runtime}min <br />
@@ -130,9 +155,8 @@ class App extends React.Component {
                   </Typography>
                 </CardContent>
               </Card>
-              </Grid>
+            </Grid>
           ))}
-
         </Grid>
       </main>
       <footer>
