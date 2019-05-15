@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from "axios";
+import Balloon from "./imgs/balloon.svg"
 import { 
   AppBar,
   Card,
@@ -107,7 +108,7 @@ class App extends React.Component {
       <React.Fragment>
       <AppBar position="sticky">
         <Toolbar>
-          <CameraIcon />
+        <img src={Balloon} width="60" height="60" />
           <Typography variant="h6" color="inherit" noWrap>
             Helium UI
           </Typography>
