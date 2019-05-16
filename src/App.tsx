@@ -74,7 +74,7 @@ class App extends React.Component {
 
   joinStr(list: string[]): string {
     if (list) {
-      return list.join(', ')
+     //  return list.join(', ')
     }
     return ''
   }
@@ -131,6 +131,10 @@ class App extends React.Component {
   // close form dialog
   formsClose = (event: any) => {
     this.setState({ formsDialog: false });
+  }
+
+  formsChange = (event: any) => {
+    console.log(event.target.name  + " changed")
   }
 
   // submit forms 
@@ -195,43 +199,60 @@ class App extends React.Component {
               <TextField 
                 autoFocus
                 margin="dense"
-                id="genres"
+                name="genres"
                 label="Genres"
                 fullWidth
+                onChange={this.formsChange}
               />
               <TextField 
+                name="id"
                 label="ID"
                 fullWidth
+                onChange={this.formsChange}
               />
               <TextField 
-                label="Move ID"
+                name="movieId"
+                label="Movie ID"
                 fullWidth
+                onChange={this.formsChange}
               />
               <TextField 
+                name="roles"
                 label="Roles"
                 fullWidth
+                onChange={this.formsChange}
               />
               <TextField 
+                name="runtime"
                 label="RunTime"
                 fullWidth
+                onChange={this.formsChange}
               />
               <TextField
+                name="textSearch"
                 fullWidth 
+                onChange={this.formsChange}
                 label="Text Search"
               />  
               <TextField 
+                name="title"
                 fullWidth
                 label="Title"
                 placeholder="Test Movie"
+                onChange={this.formsChange}
               />  
               <TextField 
+                name="type"
                 fullWidth
                 label="Type"
                 value="movie"
+                onChange={this.formsChange}
               />  
               <TextField 
+                name="year"
                 fullWidth
                 label="Year"
+                onChange={this.formsChange}
               />              
             </DialogContent>
             <DialogActions>
