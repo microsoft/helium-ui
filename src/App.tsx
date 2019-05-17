@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from "axios";
-import Balloon from "./imgs/balloon.svg"
+import Balloon from "./imgs/balloon.svg";
+import MoviePH from "./imgs/movieplaceholder.jpg";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon  from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
@@ -307,6 +308,13 @@ class App extends React.Component {
                     </IconButton>
                   }
                 />
+                <CardMedia
+                  style={{height: 0, paddingTop: '56.25%'}}
+                  // image="https://storage.googleapis.com/bit-docs/bit-logo%402x.png"
+                  image={MoviePH}
+
+                  title="img"
+                />
                 <CardContent>
                   <Typography>
                     Year: {item.year}<br />
@@ -329,7 +337,7 @@ class App extends React.Component {
           onClose={this.handleClose}  
         >
         <MenuItem onClick={this.deleteMovie}>Delete</MenuItem>
-      </Menu>
+      </Menu>      
       </main>
       <footer>
         <Typography variant="h6" align="center" gutterBottom>
