@@ -116,19 +116,6 @@ class App extends React.Component {
     });
   }
 
-  cardClick(e: any) {
-    console.log(" card clicked")
-    // e.preventDefault();
-    // // perform delete request of new sample movie to axios
-    // axios.delete(cors + heliumApi + 'movies', {newMovie})
-    //   .then(response => {
-    //     console.log(response.data);
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //   })
-  }
-
   // when add icon is clicked, new forms dialog opens
   formsOpen = (event:any) => {
     this.setState({ formsDialog: true });
@@ -166,10 +153,27 @@ class App extends React.Component {
     .catch(error => {console.log(error.response)})
   }
 
-  deleteMovie() {
+  deleteMovie = () => {
+    console.log("delete movie")
+
+    // event.preventDefault();
+    // perform delete request of new sample movie to axios
+
+    // axios.delete(cors + heliumApi + 'movies', {newMovie})
+    //   .then(response => {
+    //     console.log(response.data);
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //   })
+
+  }
+
+  deleteMultipleMovie() {
     console.log("delete movie")
     this.setState({radioDisplay: true});
   }
+
 
   // menu item on cards
   handleClick = (event:any) => {
@@ -283,14 +287,14 @@ class App extends React.Component {
           <AddIcon />
         </Fab>
 
-        <Fab aria-label="deleteMovie" color="secondary" onClick={this.checkBoxToggle} className="deleteFAB">
+        <Fab aria-label="deleteMultipleMovie" color="secondary" onClick={this.checkBoxToggle} className="deleteFAB">
           <DeleteIcon/>
         </Fab>
       </div>
       <Grid container spacing={8}>           
           {this.state.movies.map((item, i) => (
             <Grid item key={i} sm={6} md={4} lg={3}>
-              <Card className={item.title} onClick={this.cardClick}>
+              <Card className={item.title}>
                 <CardHeader 
                   title = {item.title}
                   action = {
