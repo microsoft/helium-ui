@@ -18,6 +18,7 @@ import {
   IconButton,
   MenuItem,
   Menu,
+  Checkbox,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -26,6 +27,7 @@ import {
   Button,
   TextField,
   Fab,
+  CardActions,
 } from '@material-ui/core';
 import './App.css';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
@@ -61,6 +63,8 @@ interface IState {
   actors: Actor[];
   anchorEl: any,
   formsDialog: any,
+  checkBoxDisplay: boolean,
+  checkBox: boolean,
 }
 
 class App extends React.Component {
@@ -70,6 +74,8 @@ class App extends React.Component {
     actors: [],
     anchorEl: '',
     formsDialog: false,
+    checkBoxDisplay: false,
+    checkBox: false,
   };
 
   joinStr(list: string[]): string {
@@ -162,6 +168,7 @@ class App extends React.Component {
 
   deleteMovie() {
     console.log("delete movie")
+    this.setState({radioDisplay: true});
   }
 
   // menu item on cards
@@ -173,6 +180,10 @@ class App extends React.Component {
   handleClose = () => {
     console.log("handle close")
     this.setState({ anchorEl: null });
+  }
+
+  checkBoxToggle = () => {
+    this.setState({checkBox: !this.state.checkBox})
   }
 
   render() { 
@@ -272,7 +283,7 @@ class App extends React.Component {
           <AddIcon />
         </Fab>
 
-        <Fab aria-label="deleteMovie" color="secondary" className="deleteFAB">
+        <Fab aria-label="deleteMovie" color="secondary" onClick={this.checkBoxToggle} className="deleteFAB">
           <DeleteIcon/>
         </Fab>
       </div>
@@ -299,6 +310,10 @@ class App extends React.Component {
                     Genres: {this.joinStr(item.genres)}<br />
                   </Typography>
                 </CardContent>
+                <CardActions>
+                  <Checkbox 
+                    checked={this.state.checkBox}/>
+                </CardActions>
               </Card>
             </Grid>
           ))}
@@ -314,10 +329,8 @@ class App extends React.Component {
       </main>
       <footer>
         <Typography variant="h6" align="center" gutterBottom>
-          Footer
         </Typography>
         <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
-          Fill me in later
         </Typography>
       </footer>
       </React.Fragment>
