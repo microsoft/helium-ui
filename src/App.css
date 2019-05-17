@@ -13,6 +13,14 @@
   border: 5px dotted pink;
 }
 
+.searchBar {
+  position: relative;
+  margin-left: 75%;
+}
+
+.barHeader {
+  margin: 5px;
+}
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

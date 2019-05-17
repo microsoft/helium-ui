@@ -185,10 +185,17 @@ class App extends React.Component {
           <img src={Balloon} width="50" height="50" />
           <Typography variant="h6" color="inherit" noWrap>
             Helium UI
-          </Typography>
-          {/* <img src={Add} onClick={this.addBtnClick} /> */}
-          <Dialog
-            
+          </Typography>          
+          <div className="searchBar">
+              <SearchIcon />
+              <InputBase
+                className="inputSearch"
+                placeholder="Search…"
+              />
+          </div>
+        </Toolbar>
+      </AppBar>
+      <Dialog
             open={this.state.formsDialog}
             onClose={this.formsClose}
             aria-labelledby="form-dialog-title"
@@ -260,8 +267,6 @@ class App extends React.Component {
               <Button onClick={this.formsSubmit} color="primary">Submit</Button>
             </DialogActions>
           </Dialog>
-        </Toolbar>
-      </AppBar>
       <main>
       <div>
         <Fab className="addFAB" aria-label="addMovie" onClick={this.formsOpen} color="primary" >
