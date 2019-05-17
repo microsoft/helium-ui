@@ -189,7 +189,6 @@ class App extends React.Component {
           <div className="searchBar">
               <SearchIcon />
               <InputBase
-                className="inputSearch"
                 placeholder="Search…"
               />
           </div>
@@ -268,10 +267,11 @@ class App extends React.Component {
             </DialogActions>
           </Dialog>
       <main>
-      <div>
+      <div className="fab"> 
         <Fab className="addFAB" aria-label="addMovie" onClick={this.formsOpen} color="primary" >
           <AddIcon />
         </Fab>
+
         <Fab aria-label="deleteMovie" color="secondary" className="deleteFAB">
           <DeleteIcon/>
         </Fab>

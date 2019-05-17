@@ -18,6 +18,13 @@
   margin-left: 75%;
 }
 
+.fab {
+  position: fixed;
+  right:0;
+  bottom:0;
+  padding:20px;
+}
+
 .barHeader {
   margin: 5px;
 }
