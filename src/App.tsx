@@ -170,7 +170,7 @@ class App extends React.Component {
   };
 
   // menu item on cards
-  handleClose() {
+  handleClose = () => {
     console.log("handle close")
     this.setState({ anchorEl: null });
   }
@@ -289,15 +289,6 @@ class App extends React.Component {
                       aria-haspopup="true"
                     >
                       <MoreVertIcon />
-                      <Menu
-                        id="cardMenu"
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={this.handleClose}  
-                      >
-                        <MenuItem onClick={this.deleteMovie}>Delete</MenuItem>
-                        <MenuItem>Another Item</MenuItem>
-                      </Menu>
                     </IconButton>
                   }
                 />
@@ -312,6 +303,14 @@ class App extends React.Component {
             </Grid>
           ))}
         </Grid>
+        <Menu
+          id="cardMenu"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={this.handleClose}  
+        >
+        <MenuItem onClick={this.deleteMovie}>Delete</MenuItem>
+      </Menu>
       </main>
       <footer>
         <Typography variant="h6" align="center" gutterBottom>
