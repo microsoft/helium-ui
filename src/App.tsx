@@ -129,11 +129,6 @@ class App extends React.Component {
     });
   }
 
-  // when add icon is clicked, new forms dialog opens
-  formsOpen = (event:any) => {
-    this.setState({ formsDialog: true });
-  };
-
   deleteMovie = () => {
 
     console.log("delete")
@@ -397,7 +392,7 @@ class App extends React.Component {
       />
       </div>
       <div className="fab"> 
-        <Fab className="addFAB" aria-label="addMovie" onClick={this.formsOpen} color="primary" >
+        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({formsDialog: true})} color="primary" >
           <AddIcon />
         </Fab>
         <Fab aria-label="deleteMultipleMovie" color="secondary" onClick={this.checkBoxToggle} className="deleteFAB">
