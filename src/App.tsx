@@ -132,8 +132,7 @@ class App extends React.Component {
   deleteMovie = () => {
 
     console.log("delete")
-    this.setState({deleteDialog: true });
-    //this.setState({deleteAlert: true });
+    this.setState({deleteAlert: true, deleteDialog: false});
     
     // event.preventDefault();
     // perform delete request of new sample movie to axios
@@ -232,7 +231,7 @@ class App extends React.Component {
           open={Boolean(anchorEl)}
           onClose={this.handleClose}  
         >
-        <MenuItem onClick={this.deleteMovie}>Delete</MenuItem>
+        <MenuItem onClick={() => this.setState({deleteDialog: true })}>Delete</MenuItem>
         <MenuItem>Edit</MenuItem>
 
       </Menu>      
