@@ -70,6 +70,7 @@ interface IState {
   checkBox: boolean,
   postSuccessAlert: boolean,
   postFailureAlert: boolean,
+  deleteAlert: boolean,
 }
 
 class App extends React.Component {
@@ -83,6 +84,7 @@ class App extends React.Component {
     checkBox: false,
     postSuccessAlert: false,
     postFailureAlert: false,
+    deleteAlert: false,
   };
 
   joinStr(list: string[]): string {
@@ -134,8 +136,9 @@ class App extends React.Component {
   }
 
   deleteMovie = () => {
-    console.log("delete movie")
 
+    console.log("delete")
+    this.setState({deleteAlert: true });
     // event.preventDefault();
     // perform delete request of new sample movie to axios
 
@@ -234,6 +237,8 @@ class App extends React.Component {
           onClose={this.handleClose}  
         >
         <MenuItem onClick={this.deleteMovie}>Delete</MenuItem>
+        <MenuItem>Edit</MenuItem>
+
       </Menu>      
       </main>
       <div className="dialogs">
@@ -347,6 +352,7 @@ class App extends React.Component {
       </div>
       <div>
       <Snackbar
+        className="postSuccessAlert"
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'center',
@@ -356,13 +362,24 @@ class App extends React.Component {
         action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]}
       />
       <Snackbar
+        className="postFailureAlert"
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'center',
         }}
         open={this.state.postFailureAlert}
-        message={<span id="postSuccessMessage">Failed to Add Movie</span>}
+        message={<span id="postFailureMessage">Failed to Add Movie</span>}
         action={[<IconButton onClick={() => this.setState({postFailureAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]}
+      />
+      <Snackbar
+        className="deleteAlert"
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        open={this.state.deleteAlert}
+        message={<span id="deleteMessage">Movie Deleted</span>}
+        action={[<IconButton onClick={() => this.setState({deleteAlert: false})}><CloseIcon color="primary" /></IconButton>]}
       />
       </div>
       <div className="fab"> 
