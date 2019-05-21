@@ -132,7 +132,9 @@ class App extends React.Component {
   deleteMovie = () => {
 
     console.log("delete")
-    this.setState({deleteAlert: true });
+    this.setState({deleteDialog: true });
+    //this.setState({deleteAlert: true });
+    
     // event.preventDefault();
     // perform delete request of new sample movie to axios
 
@@ -349,10 +351,10 @@ class App extends React.Component {
             <DialogContentText>Are you sure you want to delete this movie?</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
+            <Button onClick={() => this.setState({deleteDialog: false})} color="primary">
               Disagree
             </Button>
-            <Button onClick={this.handleClose} color="primary" autoFocus>
+            <Button onClick={this.deleteMovie} color="primary" autoFocus>
               Agree
             </Button>
           </DialogActions>
