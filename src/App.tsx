@@ -33,6 +33,7 @@ import './App.css';
 import { Formik, Field, Form, FormikProps } from 'formik';
 import { TextField } from 'formik-material-ui';
 import Snackbar from '@material-ui/core/Snackbar';
+import { EPROTONOSUPPORT } from 'constants';
 
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
@@ -197,7 +198,7 @@ class App extends React.Component {
       <Grid container spacing={8}>           
           {this.state.movies.map((item, i) => (
             <Grid item key={i} sm={6} md={4} lg={3}>
-              <Card className="cards">
+              <Card className={item.title}>
                 <CardHeader 
                   title = {item.title}
                   action = {
@@ -252,17 +253,14 @@ class App extends React.Component {
               <Formik
                 initialValues={{ id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], }}
                 onSubmit={(values:Movie , actions) => {
-                  console.log(values);
-                  this.setState({ postSuccessAlert: true });
                   
                   // todo: add failure notification
                   // if movie params are not full then give this postfailure message
                   // this.setState({ postFailureAlert: true });
 
-                  
                   // submits post request of new sample movie to axios
                   axios.post(cors + heliumApi + 'movies', values)
-                  .then(response => console.log(response.data))
+                  .then(response => this.setState({ postSuccessAlert: true, formsDialog: false}))
                   .catch(error => {console.log(error.response)})
                   }
                 }
