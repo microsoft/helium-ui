@@ -28,6 +28,7 @@ import {
   Button,
   Fab,
   CardActions,
+  DialogContentText,
 } from '@material-ui/core';
 import './App.css';
 import { Formik, Field, Form, FormikProps } from 'formik';
@@ -67,6 +68,7 @@ interface IState {
   actors: Actor[];
   anchorEl: any,
   formsDialog: any,
+  deleteDialog: boolean,
   checkBoxDisplay: boolean,
   checkBox: boolean,
   postSuccessAlert: boolean,
@@ -81,6 +83,7 @@ class App extends React.Component {
     actors: [],
     anchorEl: '',
     formsDialog: false,
+    deleteDialog: false,
     checkBoxDisplay: false,
     checkBox: false,
     postSuccessAlert: false,
@@ -130,11 +133,6 @@ class App extends React.Component {
   formsOpen = (event:any) => {
     this.setState({ formsDialog: true });
   };
-
-  // close form dialog
-  formsClose = (event: any) => {
-    this.setState({ formsDialog: false });
-  }
 
   deleteMovie = () => {
 
@@ -245,7 +243,6 @@ class App extends React.Component {
       <div className="dialogs">
           <Dialog     
             open={this.state.formsDialog}
-            onClose={this.formsClose}
             aria-labelledby="form-dialog-title"
             >
             <DialogTitle id="form-dialog-title">Add Movie</DialogTitle>
@@ -340,13 +337,32 @@ class App extends React.Component {
                       margin="normal"   
                       InputProps={{readOnly: true}}         
                     />
-                    <Button color="primary" onClick={this.formsClose}>Cancel</Button>
+                    <Button color="primary" onClick={() => this.setState({formsDialog: false})}>Cancel</Button>
                     <Button color="primary" type="submit" >Submit</Button>
                   </Form>
                 )}
               />
           </DialogContent>
         </Dialog>
+      </div>
+      <div className="deleteDialog">
+        <Dialog
+          open={this.state.deleteDialog}
+          >
+          <DialogTitle>Delete Movie</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Are you sure you want to delete this movie?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Disagree
+            </Button>
+            <Button onClick={this.handleClose} color="primary" autoFocus>
+              Agree
+            </Button>
+          </DialogActions>
+        </Dialog>
+
       </div>
       <div>
       <Snackbar
