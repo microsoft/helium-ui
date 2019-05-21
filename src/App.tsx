@@ -197,7 +197,7 @@ class App extends React.Component {
       <Grid container spacing={8}>           
           {this.state.movies.map((item, i) => (
             <Grid item key={i} sm={6} md={4} lg={3}>
-              <Card className={item.title}>
+              <Card className="cards">
                 <CardHeader 
                   title = {item.title}
                   action = {

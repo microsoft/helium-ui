@@ -1,22 +1,25 @@
 # Helium UI
 
-Work In Progress
+Helium UI is a React application built in TypeScript created to test and display REST API endpoints. Helium UI's core functionality includes:
+- Display all movies from endpoint (GET)
+- Add a new movie to the list of movies (POST)
+- Delete a movie from the list of movies (DELETE) - in progress
+
+## Packages Used:
+- Material UI - Styling of the application
+- Axios - Performing CRUD requests and operations
+- Formik - Handling state using React Forms and Dialogs
+  
 
 ## Getting Started
 
-1. Install NodeJS
-2. Install dependencies
+1. Clone the repository
+2. Open a terminal in the local respository directory
+3. Run the application using
 ```
-npm install
+npm build && npm start
 ```
-3. Build js from ts
-```
-npm run condig
-```
-4. Start Development Server
-```
-npm start
-```
+
 
 ## Contributing
 
