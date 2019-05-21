@@ -154,15 +154,9 @@ class App extends React.Component {
 
 
   // menu item on cards
-  handleClick = (event:any) => {
+  handleMenuClick = (event:any) => {
     this.setState({ anchorEl: event.currentTarget });
   };
-
-  // menu item on cards
-  handleClose = () => {
-    console.log("handle close")
-    this.setState({ anchorEl: null });
-  }
 
   checkBoxToggle = () => {
     this.setState({checkBox: !this.state.checkBox})
@@ -197,7 +191,7 @@ class App extends React.Component {
                   title = {item.title}
                   action = {
                     <IconButton 
-                      onClick={this.handleClick}
+                      onClick={this.handleMenuClick}
                       aria-owns={anchorEl ? 'cardMenu' : undefined}
                       aria-haspopup="true"
                     >
@@ -229,7 +223,7 @@ class App extends React.Component {
           id="cardMenu"
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
-          onClose={this.handleClose}  
+          onClose={() => this.setState({ anchorEl: null })}  
         >
         <MenuItem onClick={() => this.setState({deleteDialog: true })}>Delete</MenuItem>
         <MenuItem>Edit</MenuItem>
