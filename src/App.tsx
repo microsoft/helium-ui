@@ -34,8 +34,6 @@ import './App.css';
 import { Formik, Field, Form, FormikProps } from 'formik';
 import { TextField } from 'formik-material-ui';
 import Snackbar from '@material-ui/core/Snackbar';
-import { EPROTONOSUPPORT } from 'constants';
-
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -152,7 +150,6 @@ class App extends React.Component {
     this.setState({radioDisplay: true});
   }
 
-
   // menu item on cards
   handleMenuClick = (event:any) => {
     this.setState({ anchorEl: event.currentTarget });
@@ -176,8 +173,7 @@ class App extends React.Component {
             <div className="searchBar">
                 <SearchIcon />
                 <InputBase
-                  placeholder="Search…"
-                />
+                  placeholder="Search…" />
             </div>
           </Toolbar>
         </AppBar>          
@@ -193,8 +189,7 @@ class App extends React.Component {
                     <IconButton 
                       onClick={this.handleMenuClick}
                       aria-owns={anchorEl ? 'cardMenu' : undefined}
-                      aria-haspopup="true"
-                    >
+                      aria-haspopup="true" >
                       <MoreVertIcon />
                     </IconButton>
                   }
@@ -223,18 +218,15 @@ class App extends React.Component {
           id="cardMenu"
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
-          onClose={() => this.setState({ anchorEl: null })}  
-        >
+          onClose={() => this.setState({ anchorEl: null })} >
         <MenuItem onClick={() => this.setState({deleteDialog: true })}>Delete</MenuItem>
         <MenuItem>Edit</MenuItem>
-
       </Menu>      
       </main>
       <div className="dialogs">
           <Dialog     
             open={this.state.formsDialog}
-            aria-labelledby="form-dialog-title"
-            >
+            aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Add Movie</DialogTitle>
             <DialogContent>
               <Formik
@@ -259,64 +251,56 @@ class App extends React.Component {
                       type="text"
                       component={TextField}
                       fullWidth
-                      margin="normal"
-                    />
+                      margin="normal" />
                     <Field 
                       name="year"
                       label="Year"
                       type="text"
                       component={TextField}
                       fullWidth  
-                      margin="normal"
-                    />
+                      margin="normal" />
                     <Field 
                       name="runtime"
                       label="Runtime"
                       type="text"
                       component={TextField}
                       fullWidth
-                      margin="normal"            
-                    />
+                      margin="normal" />
                     <Field
                       name="textSearch"
                       label="Text Search"
                       type="text"
                       component={TextField}
                       fullWidth
-                      margin="normal"
-                    />
+                      margin="normal" />
                     <Field
                       name="roles"
                       label="Roles"
                       type="text"
                       component={TextField}
                       fullWidth
-                      margin="normal"
-                    />           
+                      margin="normal" />           
                     <Field
                       name="genres"
                       label="Genres"
                       type="text"
                       component={TextField}
                       fullWidth
-                      margin="normal"
-                    />   
+                      margin="normal" />   
                     <Field
                       name="movieId"
                       label="Movie ID"
                       type="text"
                       component={TextField}
                       fullWidth
-                      margin="normal"
-                    />           
+                      margin="normal" />           
                     <Field 
                       name="id"
                       label="Id"
                       type="text"
                       component={TextField}
                       fullWidth  
-                      margin="normal"
-                    />
+                      margin="normal" />
                     <Field 
                       name="type"
                       label="Type"
@@ -325,8 +309,7 @@ class App extends React.Component {
                       component={TextField}
                       fullWidth
                       margin="normal"   
-                      InputProps={{readOnly: true}}         
-                    />
+                      InputProps={{readOnly: true}} />
                     <Button color="primary" onClick={() => this.setState({formsDialog: false})}>Cancel</Button>
                     <Button color="primary" type="submit" >Submit</Button>
                   </Form>
@@ -337,8 +320,7 @@ class App extends React.Component {
       </div>
       <div className="deleteDialog">
         <Dialog
-          open={this.state.deleteDialog}
-          >
+          open={this.state.deleteDialog} >
           <DialogTitle>Delete Movie</DialogTitle>
           <DialogContent>
             <DialogContentText>Are you sure you want to delete this movie?</DialogContentText>
@@ -363,8 +345,7 @@ class App extends React.Component {
         }}
         open={this.state.postSuccessAlert}
         message={<span id="postSuccessMessage">Movie Successfully Added</span>}
-        action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]}
-      />
+        action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="postFailureAlert"
         anchorOrigin={{
@@ -373,8 +354,7 @@ class App extends React.Component {
         }}
         open={this.state.postFailureAlert}
         message={<span id="postFailureMessage">Failed to Add Movie</span>}
-        action={[<IconButton onClick={() => this.setState({postFailureAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]}
-      />
+        action={[<IconButton onClick={() => this.setState({postFailureAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="deleteAlert"
         anchorOrigin={{
@@ -383,8 +363,7 @@ class App extends React.Component {
         }}
         open={this.state.deleteAlert}
         message={<span id="deleteMessage">Movie Deleted</span>}
-        action={[<IconButton onClick={() => this.setState({deleteAlert: false})}><CloseIcon color="primary" /></IconButton>]}
-      />
+        action={[<IconButton onClick={() => this.setState({deleteAlert: false})}><CloseIcon color="primary" /></IconButton>]} />
       </div>
       <div className="fab"> 
         <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({formsDialog: true})} color="primary" >
