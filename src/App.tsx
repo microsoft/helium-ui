@@ -31,9 +31,12 @@ import {
   DialogContentText,
 } from '@material-ui/core';
 import './App.css';
-import { Formik, Field, Form, FormikProps } from 'formik';
+import { Formik, Field, Form, FormikProps, setNestedObjectValues, FormikActions } from 'formik';
 import { TextField } from 'formik-material-ui';
 import Snackbar from '@material-ui/core/Snackbar';
+import ApplicationBar from './components/applicationBar';
+import * as Yup from 'yup';
+
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -64,34 +67,46 @@ interface IState {
   movies: Movie[];
   genres: Genre[];
   actors: Actor[];
-  anchorEl: any,
-  formsDialog: any,
+  anchorEl: HTMLElement | null;
+  formsDialog: boolean,
   deleteDialog: boolean,
   checkBoxDisplay: boolean,
   checkBox: boolean,
   postSuccessAlert: boolean,
   postFailureAlert: boolean,
   deleteAlert: boolean,
+  requiredField: boolean,
+}
+
+interface IProps {
+  melvinmovies: Movie[];
 }
 
 class App extends React.Component {
-  state: IState = { 
-    movies: [],
-    genres: [],
-    actors: [],
-    anchorEl: '',
-    formsDialog: false,
-    deleteDialog: false,
-    checkBoxDisplay: false,
-    checkBox: false,
-    postSuccessAlert: false,
-    postFailureAlert: false,
-    deleteAlert: false,
-  };
+  
+  state: IState;
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      movies: [],
+      genres: [],
+      actors: [],
+      anchorEl: null,
+      formsDialog: false,
+      deleteDialog: false,
+      checkBoxDisplay: false,
+      checkBox: false,
+      postSuccessAlert: false,
+      postFailureAlert: false,
+      deleteAlert: false,
+      requiredField: false,
+    }
+  }
 
   joinStr(list: string[]): string {
-    if (list) {
-    //  return list.join(', ')
+    if (list && list instanceof Array) {
+      return list.join(', ')
     }
     return ''
   }
@@ -151,7 +166,7 @@ class App extends React.Component {
   }
 
   // menu item on cards
-  handleMenuClick = (event:any) => {
+  handleMenuClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -159,25 +174,20 @@ class App extends React.Component {
     this.setState({checkBox: !this.state.checkBox})
   }
 
+  submitMovie = (values: Movie, action:FormikActions<Movie>) => {
+    console.log(values);
+
+   // submits post request of new sample movie to axios
+    axios.post(cors + heliumApi + 'movies', values)
+    .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
+    .catch(error => {console.log(error.response)})
+  }
+
   render() { 
     const { anchorEl } = this.state;
     return (
       <React.Fragment>
-      <div className="appbar">
-        <AppBar position="sticky">
-          <Toolbar>
-            <img src={Balloon} width="50" height="50" />
-            <Typography variant="h6" color="inherit" noWrap>
-              Helium UI
-            </Typography>          
-            <div className="searchBar">
-                <SearchIcon />
-                <InputBase
-                  placeholder="Search…" />
-            </div>
-          </Toolbar>
-        </AppBar>          
-      </div>
+      <ApplicationBar />
       <main> 
       <Grid container spacing={8}>           
           {this.state.movies.map((item, i) => (
@@ -231,21 +241,27 @@ class App extends React.Component {
             <DialogContent>
               <Formik
                 initialValues={{ id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], }}
-                onSubmit={(values:Movie , actions) => {
-                  
-                  // todo: add failure notification
-                  // if movie params are not full then give this postfailure message
-                  // this.setState({ postFailureAlert: true });
-
-                  // submits post request of new sample movie to axios
-                  axios.post(cors + heliumApi + 'movies', values)
-                  .then(response => this.setState({ postSuccessAlert: true, formsDialog: false}))
-                  .catch(error => {console.log(error.response)})
-                  }
-                }
+                // validate = {this.validateForms}
+                validateOnChange= {true}
+                validationSchema={Yup.object().shape({
+                  title: Yup.string()
+                  .required('Title Required'),
+                  id: Yup.string()
+                    .required('ID Required'),
+                  year: Yup.string()
+                    .required('Year Required'),
+                  runtime: Yup.string()
+                    .required('Runtime Required'),
+                  textSearch: Yup.string()
+                    .required('TextSearch Required. Must equal same value as Title'),
+                  movieId: Yup.string()
+                    .required('Required'),                                       
+                })}
+                onSubmit={(this.submitMovie)}
                 render={(formikBag: FormikProps<Movie>) => (
                   <Form autoComplete="on">
                     <Field
+                      required
                       name="title"
                       label="Title"
                       type="text"
@@ -253,20 +269,19 @@ class App extends React.Component {
                       fullWidth
                       margin="normal" />
                     <Field 
+                      requiredField
                       name="year"
-                      label="Year"
                       type="text"
                       component={TextField}
-                      fullWidth  
-                      margin="normal" />
+                      margin="dense" />
                     <Field 
+                      required
                       name="runtime"
-                      label="Runtime"
-                      type="text"
+                      type="number"
                       component={TextField}
-                      fullWidth
-                      margin="normal" />
+                      margin="dense" />
                     <Field
+                      required
                       name="textSearch"
                       label="Text Search"
                       type="text"
@@ -288,20 +303,21 @@ class App extends React.Component {
                       fullWidth
                       margin="normal" />   
                     <Field
+                      required
                       name="movieId"
                       label="Movie ID"
                       type="text"
                       component={TextField}
-                      fullWidth
-                      margin="normal" />           
+                      margin="dense" />           
                     <Field 
+                      required
                       name="id"
                       label="Id"
                       type="text"
                       component={TextField}
-                      fullWidth  
-                      margin="normal" />
+                      margin="dense" />
                     <Field 
+                      required
                       name="type"
                       label="Type"
                       type="text"
@@ -364,6 +380,15 @@ class App extends React.Component {
         open={this.state.deleteAlert}
         message={<span id="deleteMessage">Movie Deleted</span>}
         action={[<IconButton onClick={() => this.setState({deleteAlert: false})}><CloseIcon color="primary" /></IconButton>]} />
+      <Snackbar
+        className="requiredField"
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        open={this.state.requiredField}
+        message={<span id="deleteMessage">Required Field</span>}
+        action={[<IconButton onClick={() => this.setState({requiredField: false})}><CloseIcon color="primary" /></IconButton>]} />
       </div>
       <div className="fab"> 
         <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({formsDialog: true})} color="primary" >
@@ -383,5 +408,6 @@ class App extends React.Component {
     );
   }
 }
+
 
 export default App;
