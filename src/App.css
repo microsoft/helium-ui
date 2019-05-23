@@ -8,6 +8,31 @@
   pointer-events: none;
 }
 
+.addFAB {
+  margin: 40px;
+  border: 5px dotted pink;
+}
+
+.searchBar {
+  position: relative;
+  margin-left: 75%;  
+}
+
+.fab {
+  position: fixed;
+  right:0;
+  bottom:0;
+  padding:20px;
+}
+
+.barHeader {
+  margin: 5px;
+}
+
+.cards {
+  border: orange;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

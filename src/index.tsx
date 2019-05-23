@@ -6,6 +6,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import theme from './theme';
 
 import App from './App';
+// import PostForm from './components/postForm';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
@@ -13,6 +14,7 @@ ReactDOM.render(
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline />
       <App />
+      {/* <PostForm /> */}
     </ThemeProvider>, 
     document.getElementById('root'),
 );
