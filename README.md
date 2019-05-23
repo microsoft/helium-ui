@@ -30,20 +30,24 @@ npm build && npm start
 ```
 docker build -t helium-ui .
 ```
+
 4. Run the application using
 ```
 docker run -it -P helium-ui
 ```
-In another terminal, run:
+
+   In another terminal, run:
 ```
 docker ps
 ```
-Output will show the port number the image is running on:
+
+   Output will show the port number the image is running on:
 ```
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  
 1dafc0296c23        helium-ui           "npm start"              24 seconds ago      Up 23 seconds       0.0.0.0:32770->3000/tcp
 ```
-In a browser, navigate to `http://localhost:<port number from previous step>` and the Helium UI should appear.
+
+5. In a browser, navigate to `http://localhost:<port number from previous step>` and the Helium UI should appear.
 
 
 ## Contributing
