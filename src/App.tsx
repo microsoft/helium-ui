@@ -78,31 +78,22 @@ interface IState {
   requiredField: boolean,
 }
 
-interface IProps {
-  melvinmovies: Movie[];
-}
-
 class App extends React.Component {
   
-  state: IState;
-
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      movies: [],
-      genres: [],
-      actors: [],
-      anchorEl: null,
-      formsDialog: false,
-      deleteDialog: false,
-      checkBoxDisplay: false,
-      checkBox: false,
-      postSuccessAlert: false,
-      postFailureAlert: false,
-      deleteAlert: false,
-      requiredField: false,
-    }
-  }
+  state: IState = {
+    movies: [],
+    genres: [],
+    actors: [],
+    anchorEl: null,
+    formsDialog: false,
+    deleteDialog: false,
+    checkBoxDisplay: false,
+    checkBox: false,
+    postSuccessAlert: false,
+    postFailureAlert: false,
+    deleteAlert: false,
+    requiredField: false,
+  };
 
   joinStr(list: string[]): string {
     if (list && list instanceof Array) {
@@ -241,7 +232,6 @@ class App extends React.Component {
             <DialogContent>
               <Formik
                 initialValues={{ id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], }}
-                // validate = {this.validateForms}
                 validateOnChange= {true}
                 validationSchema={Yup.object().shape({
                   title: Yup.string()
@@ -350,7 +340,6 @@ class App extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-
       </div>
       <div>
       <Snackbar
