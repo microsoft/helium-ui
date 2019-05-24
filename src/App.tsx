@@ -136,7 +136,7 @@ class App extends React.Component {
   deleteMovie = (id: string) => {
     this.setState({deleteMessage: "received delete cmd for " + id})
     //("recevied delete cmd for  " + id);
-    this.setState({deleteDialog: true});
+    this.setState({deleteDialog: true, formsTitle: "Delete Movie"});
     
   //   event.preventDefault();
   //   perform delete request of new sample movie to axios
@@ -154,6 +154,7 @@ class App extends React.Component {
   editMovie = (movie: Movie) => {
     console.log("movie " + movie);
     this.setState({editMovie: movie, formsDialog: true, formsTitle:"Edit Movie"});
+    //todo: do axios patch!
   }
 
   deleteMultipleMovie() {
@@ -180,12 +181,23 @@ class App extends React.Component {
   }
 
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
-    console.log(values);
+      
+    if(this.state.formsTitle === "Edit Movie")
+    {
+      //perform edit movie aciton
+      console.log("Edit Movie")
 
-   // submits post request of new sample movie to axios
-    axios.post(cors + heliumApi + 'movies', values)
-    .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
-    .catch(error => {console.log(error.response)})
+      axios.patch(cors + heliumApi + 'movies', values).then(response => {
+        console.log("Yay")
+      })
+    }
+    else {
+      //performs submit new movie action using post
+      axios.post(cors + heliumApi + 'movies', values)
+      .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
+      .catch(error => {console.log(error.response)})
+    }
+    console.log(values);
   }
 
   render() { 
@@ -230,7 +242,7 @@ class App extends React.Component {
                   movieId: Yup.string()
                     .required('Required'),                                       
                 })}
-                onSubmit={(this.submitMovie)}
+                onSubmit={this.submitMovie}
                 render={(formikBag: FormikProps<Movie>) => (
                   <Form autoComplete="on">
                     <Field
@@ -315,7 +327,7 @@ class App extends React.Component {
       <div className="deleteDialog">
         <Dialog
           open={this.state.deleteDialog} >
-          <DialogTitle>Delete Movie</DialogTitle>
+          <DialogTitle>{this.state.formsTitle}</DialogTitle>
           <DialogContent>
             <DialogContentText>Are you sure you want to delete this movie?</DialogContentText>
           </DialogContent>
