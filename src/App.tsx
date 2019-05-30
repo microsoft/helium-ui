@@ -21,7 +21,6 @@ import { TextField } from 'formik-material-ui';
 import Snackbar from '@material-ui/core/Snackbar';
 import ApplicationBar from './components/applicationBar';
 import MovieCard from './components/movieComp';
-import FormComp from './components/postForm';
 
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
@@ -69,25 +68,6 @@ class App extends React.Component {
     deleteMovies: [],
   };
 
-  // state: IState;
-  // constructor(props:IProps) {
-  //   super(props);
-  //   this.state = {
-  //     movies: [],
-  //     genres: [],
-  //     actors: [],
-  //     anchorEl: null,
-  //     formsDialog: false,
-  //     deleteDialog: false,
-  //     checkBoxDisplay: false,
-  //     checkBox: false,
-  //     postSuccessAlert: false,
-  //     postFailureAlert: false,
-  //     deleteAlert: false,
-  //     requiredField: false,
-  //   };
-  // }
-
   joinStr(list: string[]): string {
     if (list && list instanceof Array) {
       return list.join(', ')
@@ -130,9 +110,10 @@ class App extends React.Component {
 
   deleteMovie = (id: string) => {
     this.setState({deleteMessage: "received delete cmd for " + id})
-    //("recevied delete cmd for  " + id);
     this.setState({deleteDialog: true, formsTitle: "Delete Movie"});
     
+    // TO DO: uncomment when delete endpoint is finished
+
     //   event.preventDefault();
     //   perform delete request of new sample movie to axios
 
@@ -149,16 +130,21 @@ class App extends React.Component {
   editMovie = (movie: Movie) => {
     console.log("movie " + movie);
     this.setState({editMovie: movie, formsDialog: true, formsTitle:"Edit Movie"});
-    //todo: do axios patch!
+    
+    //TO DO: implement axios patch when endpoint is finished
   }
 
   deleteMultipleMovies = () => {
     let moviesAr = this.state.deleteMovies;
 
+    // snackbar notification - add movies if none selected
     if(moviesAr.length === 0) {
       this.setState({deleteMessage:"Please select a movie (or movies) using the checkbox to delete it"}) 
       this.setState({deleteAlert: true}) 
     }
+
+    // adds selected movie cards titles to new array values, 
+    // snackbar notification - shows deleted cards by title
     else {
       let i;
       let values = [];
@@ -177,13 +163,13 @@ class App extends React.Component {
 
   checkBoxToggle = (movie: Movie, checkBox: boolean) => {
     
-    // remove from list
+    // remove card from array of deleted movies
     if(checkBox === true) {
       this.state.deleteMovies.pop();
       console.log(this.state.deleteMovies);
     }
 
-    // add to list
+    // add card to array of deleted movies
     if(checkBox === false) {
       this.state.deleteMovies.push(movie);
       console.log(this.state.deleteMovies);
@@ -199,19 +185,19 @@ class App extends React.Component {
     .catch(error => {console.log(error.response)})
   }
 
+  // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
-      
+    
+    // if editing a movie, perform axios patch
     if(this.state.formsTitle === "Edit Movie")
     {
-      //perform edit movie aciton
       console.log("Edit Movie")
-
       axios.patch(cors + heliumApi + 'movies', values).then(response => {
         console.log("Yay")
       })
     }
+    // if adding a movie, performs axios post
     else {
-      //performs submit new movie action using post
       axios.post(cors + heliumApi + 'movies', values)
       .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
       .catch(error => {console.log(error.response)})
