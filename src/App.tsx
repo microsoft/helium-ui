@@ -1,9 +1,5 @@
 import React from 'react';
 import axios from "axios";
-import Balloon from "./imgs/balloon.svg";
-import MoviePH from "./imgs/movieplaceholder.jpg";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import SearchIcon  from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
@@ -20,7 +16,7 @@ import {
   DialogContentText,
 } from '@material-ui/core';
 import './App.css';
-import { Formik, Field, Form, FormikProps, setNestedObjectValues, FormikActions } from 'formik';
+import { Formik, Field, Form, FormikProps, setNestedObjectValues, FormikActions, FormikProvider } from 'formik';
 import { TextField } from 'formik-material-ui';
 import Snackbar from '@material-ui/core/Snackbar';
 import ApplicationBar from './components/applicationBar';
@@ -29,7 +25,6 @@ import FormComp from './components/postForm';
 
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
-import postForm from './components/postForm';
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -41,15 +36,14 @@ interface IState {
   anchorEl: HTMLElement | null;
   formsDialog: boolean,
   deleteDialog: boolean,
-  checkBoxDisplay: boolean,
-  checkBox: boolean,
   postSuccessAlert: boolean,
   postFailureAlert: boolean,
   deleteAlert: boolean,
   requiredField: boolean,
   deleteMessage: string,
   editMovie: Movie,
-  formsTitle: string  
+  formsTitle: string,  
+  deleteMovies: Movie[];
 }
 
 interface IProps {
@@ -65,8 +59,6 @@ class App extends React.Component {
     anchorEl: null,
     formsDialog: false,
     deleteDialog: false,
-    checkBoxDisplay: false,
-    checkBox: true,
     postSuccessAlert: false,
     postFailureAlert: false,
     deleteAlert: false,
@@ -74,6 +66,7 @@ class App extends React.Component {
     deleteMessage: '',
     editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [],},
     formsTitle: '',
+    deleteMovies: [],
   };
 
   // state: IState;
@@ -131,6 +124,8 @@ class App extends React.Component {
     .catch(error => {
       console.log(error);
     });
+
+    console.log(this.state.movies)
   }
 
   deleteMovie = (id: string) => {
@@ -138,8 +133,8 @@ class App extends React.Component {
     //("recevied delete cmd for  " + id);
     this.setState({deleteDialog: true, formsTitle: "Delete Movie"});
     
-  //   event.preventDefault();
-  //   perform delete request of new sample movie to axios
+    //   event.preventDefault();
+    //   perform delete request of new sample movie to axios
 
     //  axios.delete(cors + heliumApi + 'movies', id)
     //    .then((response: any) => {
@@ -157,9 +152,22 @@ class App extends React.Component {
     //todo: do axios patch!
   }
 
-  deleteMultipleMovie() {
-    console.log("delete movie")
-    this.setState({radioDisplay: true});
+  deleteMultipleMovies = () => {
+    let moviesAr = this.state.deleteMovies;
+
+    if(moviesAr.length === 0) {
+      this.setState({deleteMessage:"Please select a movie (or movies) using the checkbox to delete it"}) 
+      this.setState({deleteAlert: true}) 
+    }
+    else {
+      let i;
+      let values = [];
+      for (i = 0; i < moviesAr.length; i++) {
+        values.push(moviesAr[i].title);
+        this.setState({deleteMessage: "Deleting..." + values})
+      }
+      this.setState({deleteDialog: true, formsTitle: "Delete Movies"})
+    }
   }
 
   // menu item on cards
@@ -167,8 +175,19 @@ class App extends React.Component {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  checkBoxToggle = () => {
-    this.setState({checkBox: !this.state.checkBox})
+  checkBoxToggle = (movie: Movie, checkBox: boolean) => {
+    
+    // remove from list
+    if(checkBox === true) {
+      this.state.deleteMovies.pop();
+      console.log(this.state.deleteMovies);
+    }
+
+    // add to list
+    if(checkBox === false) {
+      this.state.deleteMovies.push(movie);
+      console.log(this.state.deleteMovies);
+    }
   }
 
   submitMyMovie = (values: Movie) => {
@@ -210,13 +229,12 @@ class App extends React.Component {
       <Grid container spacing={8}>           
           {this.state.movies.map((item, i) => (
             <Grid item key={i} sm={6} md={4} lg={3}>
-              <MovieCard deleteMovie={this.deleteMovie} editMovie={this.editMovie} movie={item}/>
+              <MovieCard toggleCheck={this.checkBoxToggle} deleteMovie={this.deleteMovie} editMovie={this.editMovie} movie={item}/>
             </Grid>
           ))}
         </Grid>
       </main>
       <div className="dialogs">
-      {/* <FormComp submitMovie={this.submitMyMovie} movie={this.editMovie} openFormsDialog={this.state.formsDialog} /> */}
           <Dialog     
             open={this.state.formsDialog}
             aria-labelledby="form-dialog-title">
@@ -315,9 +333,8 @@ class App extends React.Component {
                       InputProps={{readOnly: true}} />
                       <div className="formButtons">
                         <Button color="primary" onClick={() => this.setState({formsDialog: false})}>Cancel</Button>
-                        <Button color="primary" type="submit" >Submit</Button>
+                        <Button color="primary" type="submit">Submit</Button>
                       </div>
-
                   </Form>
                 )}
               />
@@ -333,10 +350,10 @@ class App extends React.Component {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => this.setState({deleteDialog: false})} color="primary">
-              Disagree
+              Cancel
             </Button>
             <Button onClick={() => this.setState({deleteDialog: false, deleteAlert:true})} color="primary" autoFocus>
-              Agree
+              Confirm
             </Button>
           </DialogActions>
         </Dialog>
@@ -383,7 +400,7 @@ class App extends React.Component {
         <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({formsDialog: true, formsTitle:"Add Movie" ,editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: []}})} color="primary" >
           <AddIcon />
         </Fab>
-        <Fab aria-label="deleteMultipleMovie" color="secondary" onClick={this.checkBoxToggle} className="deleteFAB">
+        <Fab aria-label="deleteMultipleMovie" color="secondary" onClick={(this.deleteMultipleMovies)} className="deleteFAB">
           <DeleteIcon/>
         </Fab>
       </div>

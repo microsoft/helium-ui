@@ -22,18 +22,18 @@ interface IState {
     anchorEl: HTMLElement | null;
     formsDialog: boolean,
     deleteDialog: boolean,
-    checkBoxDisplay: boolean,
-    checkBox: boolean,
     postSuccessAlert: boolean,
     postFailureAlert: boolean,
     deleteAlert: boolean,
     requiredField: boolean,
+    checkedBox: boolean,
   }
 
 interface IProps {
     movie: Movie;
     deleteMovie: (id: string) => void;
     editMovie: (movie: Movie) => void;
+    toggleCheck: (movie: Movie, checkedBox: boolean) => void;
 }
   
 class movieComp extends React.Component<IProps> {
@@ -41,12 +41,11 @@ class movieComp extends React.Component<IProps> {
     constructor(props:IProps) {
         super(props);
         this.state = {
+            checkedBox: false,
             movie: props.movie,
             anchorEl: null,
             formsDialog: false,
             deleteDialog: false,
-            checkBoxDisplay: false,
-            checkBox: false,
             postSuccessAlert: false,
             postFailureAlert: false,
             deleteAlert: false,
@@ -68,12 +67,17 @@ class movieComp extends React.Component<IProps> {
         console.log(this.state.movie)
     }
 
+    toggleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({checkedBox: !this.state.checkedBox})
+        this.props.toggleCheck(this.state.movie, this.state.checkedBox);
+    }
+
     render() {  
         return (
             <div>
                 <Card>
                 <CardHeader 
-                    title = {this.state.movie.title} 
+                    title = {this.state.movie.title.substring(0,30)}
                     action = {
                         <IconButton 
                           onClick={this.handleMenuClick}
@@ -95,8 +99,8 @@ class movieComp extends React.Component<IProps> {
                     </Typography>
                 </CardContent>
                 <CardActions>
-                  <Checkbox 
-                    checked={this.state.checkBox}/>
+                    {/* <Typography color="primary">Delete</Typography> */}
+                    <Checkbox color="primary" checked={this.state.checkedBox} onChange={this.toggleCheck}/>
                 </CardActions>
                 </Card>
                 <Menu
