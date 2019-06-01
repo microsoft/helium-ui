@@ -42,7 +42,8 @@ interface IState {
   deleteMessage: string,
   editMovie: Movie,
   formsTitle: string,  
-  deleteMovies: Movie[];
+  deleteMovies: Movie[],
+  deleteId: string,
 }
 
 interface IProps {
@@ -66,6 +67,7 @@ class App extends React.Component {
     editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [],},
     formsTitle: '',
     deleteMovies: [],
+    deleteId: '',
   };
 
   joinStr(list: string[]): string {
@@ -104,26 +106,28 @@ class App extends React.Component {
     .catch(error => {
       console.log(error);
     });
-
-    console.log(this.state.movies)
   }
 
-  deleteMovie = (id: string) => {
+  deleteMovieConfirm = (id: string) => {
     this.setState({deleteMessage: "received delete cmd for " + id})
-    this.setState({deleteDialog: true, formsTitle: "Delete Movie"});
-    
-    // TO DO: uncomment when delete endpoint is finished
-
-    //   event.preventDefault();
-    //   perform delete request of new sample movie to axios
-
-    //  axios.delete(cors + heliumApi + 'movies', id)
-    //    .then((response: any) => {
-    //      console.log(response.data);
-    //    })
-    //   .catch(error => {
-    //     console.log(error);
-    //   })
+    this.setState({
+      deleteDialog: true, 
+      formsTitle: "Delete Movie",
+      deleteId: id,
+    });
+  }
+  deleteMovie = (id: string) => {
+     this.setState({deleteDialog: false, deleteAlert:true})
+     axios.delete(cors + heliumApi + 'movies/' + id)
+       .then((response: any) => {
+         console.log(response.data);
+       })
+      .catch(error => {
+        console.log(error);
+      })
+      this.setState({
+        movies: this.state.movies.filter(items => items.movieId != id)
+      });
 
   }
 
@@ -214,8 +218,8 @@ class App extends React.Component {
       <main> 
       <Grid container spacing={8}>           
           {this.state.movies.map((item, i) => (
-            <Grid item key={i} sm={6} md={4} lg={3}>
-              <MovieCard toggleCheck={this.checkBoxToggle} deleteMovie={this.deleteMovie} editMovie={this.editMovie} movie={item}/>
+            <Grid item key={item.movieId} sm={6} md={4} lg={3}>
+              <MovieCard toggleCheck={this.checkBoxToggle} deleteMovie={this.deleteMovieConfirm} editMovie={this.editMovie} movie={item}/>
             </Grid>
           ))}
         </Grid>
@@ -338,7 +342,7 @@ class App extends React.Component {
             <Button onClick={() => this.setState({deleteDialog: false})} color="primary">
               Cancel
             </Button>
-            <Button onClick={() => this.setState({deleteDialog: false, deleteAlert:true})} color="primary" autoFocus>
+            <Button onClick={() => this.deleteMovie(this.state.deleteId)} color="primary" autoFocus>
               Confirm
             </Button>
           </DialogActions>
