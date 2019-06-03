@@ -23,6 +23,7 @@ import ApplicationBar from './components/applicationBar';
 import MovieCard from './components/movieComp';
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
+import { DEFAULT_ENCODING } from 'crypto';
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -121,17 +122,28 @@ class App extends React.Component {
   // deletes a movie on dialog button "confirm"
   deleteMovie = (id: string) => {
      this.setState({deleteDialog: false, deleteAlert:true})
-     axios.delete(cors + heliumApi + 'movies/' + id)
-       .then((response: any) => {
-         console.log(response.data);
-       })
-      .catch(error => {
-        console.log(error);
-      })
-      this.setState({
-        movies: this.state.movies.filter(items => items.movieId != id)
-      });
+     let dMovies = this.state.deleteMovies;
 
+     if(this.state.deleteMovies.length > 0) {
+      let i: number;
+      for(i = 0; i < dMovies.length; i ++ ) {
+        console.log(dMovies[i]);
+        axios.delete(cors + heliumApi + 'movies/' + dMovies[i])
+        .then((response: any) => { console.log(response.data);})
+        .catch(error => { console.log(error); })
+        this.setState({
+          movies: this.state.movies.filter(items => items.movieId != dMovies[i])});
+      }
+      this.setState({snackBarMessage: "Deleting... " + this.state.deleteMovies})
+    }
+     else {
+        axios.delete(cors + heliumApi + 'movies/' + id)
+        .then((response: any) => { console.log(response.data);})
+        .catch(error => { console.log(error);})
+        this.setState({
+          movies: this.state.movies.filter(items => items.movieId != id)
+        });
+     }
   }
 
   // edits an existing movie on menu "edit" button click
