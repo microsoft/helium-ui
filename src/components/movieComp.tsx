@@ -31,7 +31,7 @@ interface IState {
 
 interface IProps {
     movie: Movie;
-    deleteMovie: (id: string) => void;
+    deleteMovie: (id: string, title: string) => void;
     editMovie: (movie: Movie) => void;
     toggleCheck: (movie: Movie, checkedBox: boolean) => void;
 }
@@ -67,7 +67,7 @@ class movieComp extends React.Component<IProps> {
 
     deleteMovie = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         console.log("delete " + this.state.movie.movieId);
-        this.props.deleteMovie(this.state.movie.movieId);
+        this.props.deleteMovie(this.state.movie.movieId, this.state.movie.title);
         // console.log("delete " + this.state.movie);
         // this.props.deleteMovie(this.state.movie);
     }

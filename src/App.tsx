@@ -108,14 +108,17 @@ class App extends React.Component {
 
   }
 
-  deleteMovieConfirm = (id: string) => {
-    this.setState({deleteMessage: "received delete cmd for " + id})
+  // snackbar notification for successful delete of movie"
+  deleteMovieConfirm = (id: string, title: string) => {
+    this.setState({deleteMessage: "received delete cmd for " + title})
     this.setState({
       deleteDialog: true, 
       formsTitle: "Delete Movie",
       deleteId: id,
     });
   }
+
+  // deletes a movie on dialog button "confirm"
   deleteMovie = (id: string) => {
      this.setState({deleteDialog: false, deleteAlert:true})
      axios.delete(cors + heliumApi + 'movies/' + id)
@@ -131,6 +134,7 @@ class App extends React.Component {
 
   }
 
+  // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
     console.log("movie " + movie);
     this.setState({editMovie: movie, formsDialog: true, formsTitle:"Edit Movie"});
@@ -192,13 +196,14 @@ class App extends React.Component {
   // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
     
-    // if editing a movie, perform axios patch
+    // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
       console.log("Edit Movie")
-      axios.patch(cors + heliumApi + 'movies', values).then(response => {
-        console.log("Yay")
+      axios.put(cors + heliumApi + 'movies', values).then(response => {
+        console.log(response)
       })
+      .catch(error => {console.log(error.response)})
     }
     // if adding a movie, performs axios post
     else {
@@ -207,6 +212,11 @@ class App extends React.Component {
       .catch(error => {console.log(error.response)})
     }
     console.log(values);
+
+    // axios.post(cors + heliumApi + 'movies', values)
+    //   .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
+    //   .catch(error => {console.log(error.response)})
+
   }
 
   handleSearch = (searchInput: string) => {
@@ -333,8 +343,7 @@ class App extends React.Component {
                       type="text"
                       value="0"
                       component={TextField}
-                      margin="dense" 
-                      InputProps={{readOnly: true}} />
+                      margin="dense" />
                       <div className="formButtons">
                         <Button color="primary" onClick={() => this.setState({formsDialog: false})}>Cancel</Button>
                         <Button color="primary" type="submit">Submit</Button>
