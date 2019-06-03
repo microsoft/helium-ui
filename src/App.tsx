@@ -41,13 +41,9 @@ interface IState {
   deleteMessage: string,
   editMovie: Movie,
   formsTitle: string,  
-<<<<<<< HEAD
   deleteMovies: Movie[];
   filteredMovies: [];
-=======
-  deleteMovies: Movie[],
   deleteId: string,
->>>>>>> 277b54001ed3c5b27f96dd6657bb76674edcc98e
 }
 
 interface IProps {
@@ -71,11 +67,8 @@ class App extends React.Component {
     editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '',},
     formsTitle: '',
     deleteMovies: [],
-<<<<<<< HEAD
     filteredMovies: [],
-=======
     deleteId: '',
->>>>>>> 277b54001ed3c5b27f96dd6657bb76674edcc98e
   };
 
   joinStr(list: string[]): string {
@@ -114,28 +107,12 @@ class App extends React.Component {
     .catch(error => {
       console.log(error);
     });
-<<<<<<< HEAD
   }
 
   searchToggle = (searchInput: string) => {
 
     //todo
 
-  }
-
-  deleteMovie = (id: any) => {
-    this.setState({deleteMessage: "received delete cmd for " + id})
-    this.setState({deleteDialog: true, formsTitle: "Delete Movie"});
-    
-    //event.preventDefault();
-    //perform delete request of new sample movie to axios
-
-    console.log(id);
-
-    axios.delete(cors + heliumApi + 'movies/', id)
-      .then((response: any) => { console.log(response.data); })
-      .catch(error => {console.log(error.response)})
-=======
   }
 
   deleteMovieConfirm = (id: string) => {
@@ -158,7 +135,6 @@ class App extends React.Component {
       this.setState({
         movies: this.state.movies.filter(items => items.movieId != id)
       });
->>>>>>> 277b54001ed3c5b27f96dd6657bb76674edcc98e
 
   }
 
