@@ -13,7 +13,7 @@ ReactDOM.render(
     <ThemeProvider theme={theme}>
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline />
-      <App />
+      <App/>
       {/* <PostForm /> */}
     </ThemeProvider>, 
     document.getElementById('root'),

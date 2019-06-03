@@ -3,8 +3,28 @@ import { AppBar, InputBase, Toolbar, Typography } from '@material-ui/core';
 import Balloon from "../imgs/balloon.svg";
 import SearchIcon  from '@material-ui/icons/Search';
 
+interface IProps {
+    handleSearchChange: (searchInput: string) => void;
+}
 
-class applicationBar extends React.Component {
+interface IState {
+    searchInput: string,
+}
+class applicationBar extends React.Component<IProps> {
+
+    state: IState
+    constructor(props:IProps) {
+        super(props);
+        this.state = {
+            searchInput: '',
+        };
+    }
+
+    // grab input of search bar
+    handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        this.setState({searchInput: event.currentTarget.value});
+        this.props.handleSearchChange(this.state.searchInput)
+    }
 
     render() {  
         return (
@@ -16,7 +36,8 @@ class applicationBar extends React.Component {
                         <div className="searchBar">
                             <SearchIcon />
                             <InputBase
-                            placeholder="Search…" />
+                            placeholder="Search..." 
+                            onChange={this.handleSearchChange} /> 
                         </div>
                     </Toolbar>
                 </AppBar>          
