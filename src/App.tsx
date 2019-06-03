@@ -38,7 +38,7 @@ interface IState {
   postFailureAlert: boolean,
   deleteAlert: boolean,
   requiredField: boolean,
-  deleteMessage: string,
+  snackBarMessage: string,
   editMovie: Movie,
   formsTitle: string,  
   deleteMovies: Movie[];
@@ -63,7 +63,7 @@ class App extends React.Component {
     postFailureAlert: false,
     deleteAlert: false,
     requiredField: false,
-    deleteMessage: '',
+    snackBarMessage: '',
     editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '',},
     formsTitle: '',
     deleteMovies: [],
@@ -110,7 +110,7 @@ class App extends React.Component {
 
   // snackbar notification for successful delete of movie"
   deleteMovieConfirm = (id: string, title: string) => {
-    this.setState({deleteMessage: "received delete cmd for " + title})
+    this.setState({snackBarMessage: "received delete cmd for " + title})
     this.setState({
       deleteDialog: true, 
       formsTitle: "Delete Movie",
@@ -147,7 +147,7 @@ class App extends React.Component {
 
     // snackbar notification - add movies if none selected
     if(moviesAr.length === 0) {
-      this.setState({deleteMessage:"Please select a movie (or movies) using the checkbox to delete it"}) 
+      this.setState({snackBarMessage:"Please select a movie (or movies) using the checkbox to delete it"}) 
       this.setState({deleteAlert: true}) 
     }
 
@@ -158,7 +158,7 @@ class App extends React.Component {
       let values = [];
       for (i = 0; i < moviesAr.length; i++) {
         values.push(moviesAr[i].title);
-        this.setState({deleteMessage: "Deleting... " + values})
+        this.setState({snackBarMessage: "Deleting... " + values})
       }
       this.setState({deleteDialog: true, formsTitle: "Delete Movies"})
     }
@@ -205,10 +205,11 @@ class App extends React.Component {
       })
       .catch(error => {console.log(error.response)})
     }
-    // if adding a movie, performs axios post
+
+    // if adding a new movie, performs axios post
     else {
       axios.post(cors + heliumApi + 'movies', values)
-      .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
+      .then(action => this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage: values.title}))
       .catch(error => {console.log(error.response)})
     }
     console.log(values);
@@ -380,7 +381,7 @@ class App extends React.Component {
           horizontal: 'center',
         }}
         open={this.state.postSuccessAlert}
-        message={<span id="postSuccessMessage">Movie Successfully Added</span>}
+        message={<span id="postSuccessMessage">Added {this.state.snackBarMessage}</span>}
         action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="postFailureAlert"
@@ -400,7 +401,7 @@ class App extends React.Component {
           horizontal: 'center',
         }}
         open={this.state.deleteAlert}
-        message={<span id="deleteMessage">{this.state.deleteMessage}</span>}
+        message={<span id="deleteMessage">{this.state.snackBarMessage}</span>}
         action={[<IconButton onClick={() => this.setState({deleteAlert: false})}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="requiredField"
