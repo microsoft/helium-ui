@@ -71,13 +71,6 @@ class App extends React.Component {
     deleteId: '',
   };
 
-  joinStr(list: string[]): string {
-    if (list && list instanceof Array) {
-      return list.join(', ')
-    }
-    return ''
-  }
-
   componentDidMount() {
 
     // grab genre data from api
@@ -242,7 +235,6 @@ class App extends React.Component {
             <DialogTitle id="form-dialog-title">{this.state.formsTitle}</DialogTitle>
             <DialogContent>
               <Formik
-                // initialValues={{ id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], }}
                 initialValues={this.state.editMovie}
                 validateOnChange= {true}
                 validationSchema={Yup.object().shape({

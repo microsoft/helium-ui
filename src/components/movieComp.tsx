@@ -53,6 +53,14 @@ class movieComp extends React.Component<IProps> {
         };
     }
 
+
+    joinStr(list: string[]): string {
+        if (list && list instanceof Array) {
+            return list.join(', ')
+        }
+        return ''
+    }
+
     handleMenuClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         this.setState({ anchorEl: event.currentTarget });
     };
@@ -97,7 +105,7 @@ class movieComp extends React.Component<IProps> {
                     <Typography>
                         Year: {this.state.movie.year}<br />
                         Runtime: {this.state.movie.runtime}min <br />
-                        Genres: {this.state.movie.genres}<br />
+                        Genres: {this.joinStr(this.state.movie.genres)}<br />
                         Key: {this.state.movie.key}<br />
                     </Typography>
                 </CardContent>
