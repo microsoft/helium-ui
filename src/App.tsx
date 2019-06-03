@@ -341,7 +341,8 @@ class App extends React.Component {
                       type="text"
                       value="0"
                       component={TextField}
-                      margin="dense" />
+                      margin="dense" 
+                      InputProps={{readOnly: true}} />
                       <div className="formButtons">
                         <Button color="primary" onClick={() => this.setState({formsDialog: false})}>Cancel</Button>
                         <Button color="primary" type="submit">Submit</Button>
@@ -412,7 +413,7 @@ class App extends React.Component {
         action={[<IconButton onClick={() => this.setState({requiredField: false})}><CloseIcon color="primary" /></IconButton>]} />
       </div>
       <div className="fab"> 
-        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({formsDialog: true, formsTitle:"Add Movie" ,editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: []}})} color="primary" >
+        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({formsDialog: true, formsTitle:"Add Movie" ,editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0'}})} color="primary" >
           <AddIcon />
         </Fab>
         <Fab aria-label="deleteMultipleMovie" color="secondary" onClick={(this.deleteMultipleMovies)} className="deleteFAB">
