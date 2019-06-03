@@ -33,7 +33,7 @@ interface IProps {
     movie: Movie;
     deleteMovie: (id: string, title: string) => void;
     editMovie: (movie: Movie) => void;
-    toggleCheck: (movie: Movie, checkedBox: boolean) => void;
+    toggleCheck: (id: string, checkedBox: boolean) => void;
 }
   
 class movieComp extends React.Component<IProps> {
@@ -79,7 +79,7 @@ class movieComp extends React.Component<IProps> {
 
     toggleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({checkedBox: !this.state.checkedBox})
-        this.props.toggleCheck(this.state.movie, this.state.checkedBox);
+        this.props.toggleCheck(this.state.movie.movieId, this.state.checkedBox);
     }
 
     render() {  

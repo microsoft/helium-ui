@@ -41,7 +41,7 @@ interface IState {
   snackBarMessage: string,
   editMovie: Movie,
   formsTitle: string,  
-  deleteMovies: Movie[];
+  deleteMovies: string[];
   filteredMovies: [];
   deleteId: string,
 }
@@ -154,12 +154,12 @@ class App extends React.Component {
     // adds selected movie cards titles to new array values, 
     // snackbar notification - shows deleted cards by title
     else {
-      let i;
-      let values = [];
-      for (i = 0; i < moviesAr.length; i++) {
-        values.push(moviesAr[i].title);
-        this.setState({snackBarMessage: "Deleting... " + values})
-      }
+      // let i;
+      // let values = [];
+      // for (i = 0; i < moviesAr.length; i++) {
+      //   values.push(moviesAr[i].title);
+      //   this.setState({snackBarMessage: "Deleting... " + values})
+      // }
       this.setState({deleteDialog: true, formsTitle: "Delete Movies"})
     }
   }
@@ -169,8 +169,8 @@ class App extends React.Component {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  checkBoxToggle = (movie: Movie, checkBox: boolean) => {
-    
+  checkBoxToggle = (id: string, checkBox: boolean) => {
+    console.log(id);
     // remove card from array of deleted movies
     if(checkBox === true) {
       this.state.deleteMovies.pop();
@@ -179,7 +179,7 @@ class App extends React.Component {
 
     // add card to array of deleted movies
     if(checkBox === false) {
-      this.state.deleteMovies.push(movie);
+      this.state.deleteMovies.push(id);
       console.log(this.state.deleteMovies);
     }
   }
