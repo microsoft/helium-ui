@@ -21,7 +21,6 @@ import { TextField } from 'formik-material-ui';
 import Snackbar from '@material-ui/core/Snackbar';
 import ApplicationBar from './components/applicationBar';
 import MovieCard from './components/movieComp';
-
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
 
@@ -43,6 +42,7 @@ interface IState {
   editMovie: Movie,
   formsTitle: string,  
   deleteMovies: Movie[];
+  filteredMovies: [];
 }
 
 interface IProps {
@@ -63,9 +63,10 @@ class App extends React.Component {
     deleteAlert: false,
     requiredField: false,
     deleteMessage: '',
-    editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [],},
+    editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '',},
     formsTitle: '',
     deleteMovies: [],
+    filteredMovies: [],
   };
 
   joinStr(list: string[]): string {
@@ -104,26 +105,26 @@ class App extends React.Component {
     .catch(error => {
       console.log(error);
     });
-
-    console.log(this.state.movies)
   }
 
-  deleteMovie = (id: string) => {
+  searchToggle = (searchInput: string) => {
+
+    //todo
+
+  }
+
+  deleteMovie = (id: any) => {
     this.setState({deleteMessage: "received delete cmd for " + id})
     this.setState({deleteDialog: true, formsTitle: "Delete Movie"});
     
-    // TO DO: uncomment when delete endpoint is finished
+    //event.preventDefault();
+    //perform delete request of new sample movie to axios
 
-    //   event.preventDefault();
-    //   perform delete request of new sample movie to axios
+    console.log(id);
 
-    //  axios.delete(cors + heliumApi + 'movies', id)
-    //    .then((response: any) => {
-    //      console.log(response.data);
-    //    })
-    //   .catch(error => {
-    //     console.log(error);
-    //   })
+    axios.delete(cors + heliumApi + 'movies/', id)
+      .then((response: any) => { console.log(response.data); })
+      .catch(error => {console.log(error.response)})
 
   }
 
@@ -150,7 +151,7 @@ class App extends React.Component {
       let values = [];
       for (i = 0; i < moviesAr.length; i++) {
         values.push(moviesAr[i].title);
-        this.setState({deleteMessage: "Deleting..." + values})
+        this.setState({deleteMessage: "Deleting... " + values})
       }
       this.setState({deleteDialog: true, formsTitle: "Delete Movies"})
     }
@@ -205,12 +206,16 @@ class App extends React.Component {
     console.log(values);
   }
 
+  handleSearch = (searchInput: string) => {
+    console.log("oh");
+  }
+
   render() { 
     const { anchorEl } = this.state;
 
     return (
       <React.Fragment>
-      <ApplicationBar />
+      <ApplicationBar handleSearchChange={this.searchToggle}/>
       <main> 
       <Grid container spacing={8}>           
           {this.state.movies.map((item, i) => (
@@ -244,7 +249,9 @@ class App extends React.Component {
                     .lowercase('Value must be lowercase')
                     .required('TextSearch Required'),
                   movieId: Yup.string()
-                    .required('Required'),                                       
+                    .required('Required'),
+                  key: Yup.string() 
+                    .required('Required')                                       
                 })}
                 onSubmit={this.submitMovie}
                 render={(formikBag: FormikProps<Movie>) => (
@@ -317,6 +324,14 @@ class App extends React.Component {
                       fullWidth
                       margin="normal"   
                       InputProps={{readOnly: true}} />
+                    <Field 
+                      required
+                      name="key"
+                      label="Key"
+                      type="text"
+                      value="0"
+                      component={TextField}
+                      margin="dense" />
                       <div className="formButtons">
                         <Button color="primary" onClick={() => this.setState({formsDialog: false})}>Cancel</Button>
                         <Button color="primary" type="submit">Submit</Button>
@@ -347,6 +362,7 @@ class App extends React.Component {
       <div>
       <Snackbar
         className="postSuccessAlert"
+        autoHideDuration={6000}
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'center',
@@ -356,6 +372,7 @@ class App extends React.Component {
         action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="postFailureAlert"
+        autoHideDuration={6000}
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'center',
@@ -365,6 +382,7 @@ class App extends React.Component {
         action={[<IconButton onClick={() => this.setState({postFailureAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="deleteAlert"
+        autoHideDuration={6000}
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'center',
@@ -374,6 +392,7 @@ class App extends React.Component {
         action={[<IconButton onClick={() => this.setState({deleteAlert: false})}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="requiredField"
+        autoHideDuration={6000}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'center',

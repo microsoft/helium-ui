@@ -8,6 +8,7 @@ export type Movie = {
     runtime: number,
     genres: string[], 
     roles: string[],
+    key: string,
 }
   
 export type Genre = {

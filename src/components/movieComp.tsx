@@ -60,6 +60,8 @@ class movieComp extends React.Component<IProps> {
     deleteMovie = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         console.log("delete " + this.state.movie.movieId);
         this.props.deleteMovie(this.state.movie.movieId);
+        // console.log("delete " + this.state.movie);
+        // this.props.deleteMovie(this.state.movie);
     }
 
     editMovie = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
@@ -96,6 +98,7 @@ class movieComp extends React.Component<IProps> {
                         Year: {this.state.movie.year}<br />
                         Runtime: {this.state.movie.runtime}min <br />
                         Genres: {this.state.movie.genres}<br />
+                        Key: {this.state.movie.key}<br />
                     </Typography>
                 </CardContent>
                 <CardActions>
