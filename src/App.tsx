@@ -24,6 +24,7 @@ import MovieCard from './components/movieComp';
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
 import { DEFAULT_ENCODING } from 'crypto';
+import { any } from 'prop-types';
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -124,17 +125,20 @@ class App extends React.Component {
      this.setState({deleteDialog: false, deleteAlert:true})
      let dMovies = this.state.deleteMovies;
 
-     if(this.state.deleteMovies.length > 0) {
-      let i: number;
-      for(i = 0; i < dMovies.length; i ++ ) {
+     if(dMovies.length > 0) {
+      let i: number, temp: any;
+      for(let i = 0; i < dMovies.length; i ++ ) {
         console.log(dMovies[i]);
         axios.delete(cors + heliumApi + 'movies/' + dMovies[i])
         .then((response: any) => { console.log(response.data);})
         .catch(error => { console.log(error); })
-        this.setState({
-          movies: this.state.movies.filter(items => items.movieId != dMovies[i])});
       }
+      temp = this.state.movies.filter(function(item) {
+        return !dMovies.includes(item.movieId);
+      })
+      this.setState({movies: temp});
       this.setState({snackBarMessage: "Deleting... " + this.state.deleteMovies})
+
     }
      else {
         axios.delete(cors + heliumApi + 'movies/' + id)
@@ -162,16 +166,7 @@ class App extends React.Component {
       this.setState({snackBarMessage:"Please select a movie (or movies) using the checkbox to delete it"}) 
       this.setState({deleteAlert: true}) 
     }
-
-    // adds selected movie cards titles to new array values, 
-    // snackbar notification - shows deleted cards by title
     else {
-      // let i;
-      // let values = [];
-      // for (i = 0; i < moviesAr.length; i++) {
-      //   values.push(moviesAr[i].title);
-      //   this.setState({snackBarMessage: "Deleting... " + values})
-      // }
       this.setState({deleteDialog: true, formsTitle: "Delete Movies"})
     }
   }
