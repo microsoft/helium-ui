@@ -23,6 +23,8 @@ import ApplicationBar from './components/applicationBar';
 import MovieCard from './components/movieComp';
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
+import { DEFAULT_ENCODING } from 'crypto';
+import { any } from 'prop-types';
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -38,10 +40,10 @@ interface IState {
   postFailureAlert: boolean,
   deleteAlert: boolean,
   requiredField: boolean,
-  deleteMessage: string,
+  snackBarMessage: string,
   editMovie: Movie,
   formsTitle: string,  
-  deleteMovies: Movie[];
+  deleteMovies: string[];
   filteredMovies: [];
   deleteId: string,
 }
@@ -63,20 +65,13 @@ class App extends React.Component {
     postFailureAlert: false,
     deleteAlert: false,
     requiredField: false,
-    deleteMessage: '',
+    snackBarMessage: '',
     editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '',},
     formsTitle: '',
     deleteMovies: [],
     filteredMovies: [],
     deleteId: '',
   };
-
-  joinStr(list: string[]): string {
-    if (list && list instanceof Array) {
-      return list.join(', ')
-    }
-    return ''
-  }
 
   componentDidMount() {
 
@@ -115,29 +110,47 @@ class App extends React.Component {
 
   }
 
-  deleteMovieConfirm = (id: string) => {
-    this.setState({deleteMessage: "received delete cmd for " + id})
+  // snackbar notification for successful delete of movie"
+  deleteMovieConfirm = (id: string, title: string) => {
+    this.setState({snackBarMessage: "received delete cmd for " + title})
     this.setState({
       deleteDialog: true, 
       formsTitle: "Delete Movie",
       deleteId: id,
     });
   }
+
+  // deletes a movie on dialog button "confirm"
   deleteMovie = (id: string) => {
      this.setState({deleteDialog: false, deleteAlert:true})
-     axios.delete(cors + heliumApi + 'movies/' + id)
-       .then((response: any) => {
-         console.log(response.data);
-       })
-      .catch(error => {
-        console.log(error);
-      })
-      this.setState({
-        movies: this.state.movies.filter(items => items.movieId != id)
-      });
+     let dMovies = this.state.deleteMovies;
 
+     if(dMovies.length > 0) {
+      let i: number, temp: any;
+      for(let i = 0; i < dMovies.length; i ++ ) {
+        console.log(dMovies[i]);
+        axios.delete(cors + heliumApi + 'movies/' + dMovies[i])
+        .then((response: any) => { console.log(response.data);})
+        .catch(error => { console.log(error); })
+      }
+      temp = this.state.movies.filter(function(item) {
+        return !dMovies.includes(item.movieId);
+      })
+      this.setState({movies: temp});
+      this.setState({snackBarMessage: "Deleting... " + this.state.deleteMovies})
+
+    }
+     else {
+        axios.delete(cors + heliumApi + 'movies/' + id)
+        .then((response: any) => { console.log(response.data);})
+        .catch(error => { console.log(error);})
+        this.setState({
+          movies: this.state.movies.filter(items => items.movieId != id)
+        });
+     }
   }
 
+  // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
     console.log("movie " + movie);
     this.setState({editMovie: movie, formsDialog: true, formsTitle:"Edit Movie"});
@@ -150,19 +163,10 @@ class App extends React.Component {
 
     // snackbar notification - add movies if none selected
     if(moviesAr.length === 0) {
-      this.setState({deleteMessage:"Please select a movie (or movies) using the checkbox to delete it"}) 
+      this.setState({snackBarMessage:"Please select a movie (or movies) using the checkbox to delete it"}) 
       this.setState({deleteAlert: true}) 
     }
-
-    // adds selected movie cards titles to new array values, 
-    // snackbar notification - shows deleted cards by title
     else {
-      let i;
-      let values = [];
-      for (i = 0; i < moviesAr.length; i++) {
-        values.push(moviesAr[i].title);
-        this.setState({deleteMessage: "Deleting... " + values})
-      }
       this.setState({deleteDialog: true, formsTitle: "Delete Movies"})
     }
   }
@@ -172,8 +176,8 @@ class App extends React.Component {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  checkBoxToggle = (movie: Movie, checkBox: boolean) => {
-    
+  checkBoxToggle = (id: string, checkBox: boolean) => {
+    console.log(id);
     // remove card from array of deleted movies
     if(checkBox === true) {
       this.state.deleteMovies.pop();
@@ -182,7 +186,7 @@ class App extends React.Component {
 
     // add card to array of deleted movies
     if(checkBox === false) {
-      this.state.deleteMovies.push(movie);
+      this.state.deleteMovies.push(id);
       console.log(this.state.deleteMovies);
     }
   }
@@ -199,21 +203,28 @@ class App extends React.Component {
   // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
     
-    // if editing a movie, perform axios patch
+    // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
       console.log("Edit Movie")
-      axios.patch(cors + heliumApi + 'movies', values).then(response => {
-        console.log("Yay")
+      axios.put(cors + heliumApi + 'movies', values).then(response => {
+        console.log(response)
       })
+      .catch(error => {console.log(error.response)})
     }
-    // if adding a movie, performs axios post
+
+    // if adding a new movie, performs axios post
     else {
       axios.post(cors + heliumApi + 'movies', values)
-      .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
+      .then(action => this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage: values.title}))
       .catch(error => {console.log(error.response)})
     }
     console.log(values);
+
+    // axios.post(cors + heliumApi + 'movies', values)
+    //   .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
+    //   .catch(error => {console.log(error.response)})
+
   }
 
   handleSearch = (searchInput: string) => {
@@ -242,7 +253,6 @@ class App extends React.Component {
             <DialogTitle id="form-dialog-title">{this.state.formsTitle}</DialogTitle>
             <DialogContent>
               <Formik
-                // initialValues={{ id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], }}
                 initialValues={this.state.editMovie}
                 validateOnChange= {true}
                 validationSchema={Yup.object().shape({
@@ -378,7 +388,7 @@ class App extends React.Component {
           horizontal: 'center',
         }}
         open={this.state.postSuccessAlert}
-        message={<span id="postSuccessMessage">Movie Successfully Added</span>}
+        message={<span id="postSuccessMessage">Added {this.state.snackBarMessage}</span>}
         action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="postFailureAlert"
@@ -398,7 +408,7 @@ class App extends React.Component {
           horizontal: 'center',
         }}
         open={this.state.deleteAlert}
-        message={<span id="deleteMessage">{this.state.deleteMessage}</span>}
+        message={<span id="deleteMessage">{this.state.snackBarMessage}</span>}
         action={[<IconButton onClick={() => this.setState({deleteAlert: false})}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="requiredField"
@@ -412,7 +422,7 @@ class App extends React.Component {
         action={[<IconButton onClick={() => this.setState({requiredField: false})}><CloseIcon color="primary" /></IconButton>]} />
       </div>
       <div className="fab"> 
-        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({formsDialog: true, formsTitle:"Add Movie" ,editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: []}})} color="primary" >
+        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({formsDialog: true, formsTitle:"Add Movie" ,editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0'}})} color="primary" >
           <AddIcon />
         </Fab>
         <Fab aria-label="deleteMultipleMovie" color="secondary" onClick={(this.deleteMultipleMovies)} className="deleteFAB">

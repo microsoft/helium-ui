@@ -31,9 +31,9 @@ interface IState {
 
 interface IProps {
     movie: Movie;
-    deleteMovie: (id: string) => void;
+    deleteMovie: (id: string, title: string) => void;
     editMovie: (movie: Movie) => void;
-    toggleCheck: (movie: Movie, checkedBox: boolean) => void;
+    toggleCheck: (id: string, checkedBox: boolean) => void;
 }
   
 class movieComp extends React.Component<IProps> {
@@ -53,13 +53,21 @@ class movieComp extends React.Component<IProps> {
         };
     }
 
+
+    joinStr(list: string[]): string {
+        if (list && list instanceof Array) {
+            return list.join(', ')
+        }
+        return ''
+    }
+
     handleMenuClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         this.setState({ anchorEl: event.currentTarget });
     };
 
     deleteMovie = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         console.log("delete " + this.state.movie.movieId);
-        this.props.deleteMovie(this.state.movie.movieId);
+        this.props.deleteMovie(this.state.movie.movieId, this.state.movie.title);
         // console.log("delete " + this.state.movie);
         // this.props.deleteMovie(this.state.movie);
     }
@@ -71,7 +79,7 @@ class movieComp extends React.Component<IProps> {
 
     toggleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({checkedBox: !this.state.checkedBox})
-        this.props.toggleCheck(this.state.movie, this.state.checkedBox);
+        this.props.toggleCheck(this.state.movie.movieId, this.state.checkedBox);
     }
 
     render() {  
@@ -97,7 +105,7 @@ class movieComp extends React.Component<IProps> {
                     <Typography>
                         Year: {this.state.movie.year}<br />
                         Runtime: {this.state.movie.runtime}min <br />
-                        Genres: {this.state.movie.genres}<br />
+                        Genres: {this.joinStr(this.state.movie.genres)}<br />
                         Key: {this.state.movie.key}<br />
                     </Typography>
                 </CardContent>
