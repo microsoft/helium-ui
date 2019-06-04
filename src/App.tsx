@@ -207,28 +207,19 @@ class App extends React.Component {
     if(this.state.formsTitle === "Edit Movie")
     {
       console.log("Edit Movie")
-      axios.put(cors + heliumApi + 'movies', values).then(response => {
-        console.log(response)
-      })
+      axios.put(cors + heliumApi + 'movies/' + values.id, values)
+      .then(action => {this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage:"Edited " + values.title})})
       .catch(error => {console.log(error.response)})
+      this.setState({ movies: this.state.movies.filter(items => items.movieId != values.id)});
     }
 
     // if adding a new movie, performs axios post
     else {
       axios.post(cors + heliumApi + 'movies', values)
-      .then(action => this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage: values.title}))
+      .then(action => this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage:"Added " + values.title}))
       .catch(error => {console.log(error.response)})
     }
-    console.log(values);
 
-    // axios.post(cors + heliumApi + 'movies', values)
-    //   .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
-    //   .catch(error => {console.log(error.response)})
-
-  }
-
-  handleSearch = (searchInput: string) => {
-    console.log("oh");
   }
 
   render() { 
@@ -388,7 +379,7 @@ class App extends React.Component {
           horizontal: 'center',
         }}
         open={this.state.postSuccessAlert}
-        message={<span id="postSuccessMessage">Added {this.state.snackBarMessage}</span>}
+        message={<span id="postSuccessMessage">{this.state.snackBarMessage}</span>}
         action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="postFailureAlert"
