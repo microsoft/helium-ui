@@ -11,7 +11,9 @@ Helium UI is a React application built in TypeScript created to test and display
 - Formik - Handling state using React Forms and Dialogs
   
 
-## Getting Started
+# Getting Started
+
+## Run Locally with npm
 
 1. Clone the repository
 2. Open a terminal in the local respository directory
@@ -19,6 +21,33 @@ Helium UI is a React application built in TypeScript created to test and display
 ```
 npm build && npm start
 ```
+
+## Run Locally with Docker
+
+1. Clone the repository
+2. Open a terminal in the local repository directory
+3. Build the application using
+```
+docker build -t helium-ui .
+```
+
+4. Run the application using
+```
+docker run -it -P helium-ui
+```
+
+   In another terminal, run:
+```
+docker ps
+```
+
+   Output will show the port number the image is running on:
+```
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  
+1dafc0296c23        helium-ui           "npm start"              24 seconds ago      Up 23 seconds       0.0.0.0:32770->3000/tcp
+```
+
+5. In a browser, navigate to `http://localhost:<port number from previous step>` and the Helium UI should appear.
 
 
 ## Contributing
