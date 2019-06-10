@@ -207,7 +207,6 @@ class App extends React.Component {
     console.log("temp " + temp.title)
     this.setState({snackBarMessage: "Edited " + this.state.editMovieInput.title + " to " + values.title, formsDialog: false, postSuccessAlert: true});
   
-    // movies.push(values);
     movies.push({
       title: values.title,
       year: values.year,
@@ -233,7 +232,6 @@ class App extends React.Component {
       .then(action => {this.handleEdit(values)})
       .catch(error => {console.log(error.response)})
       this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.editMovieInput.movieId )})
-
     }
 
     // if adding a new movie, performs axios post
@@ -248,13 +246,27 @@ class App extends React.Component {
     }
   }
 
+  sort() {
+
+  }
   render() { 
+    
     return (
       <React.Fragment>
       <ApplicationBar handleSearchChange={this.searchToggle}/>
       <main> 
       <Grid container spacing={8}>           
-          {this.state.movies.map((item, i) => (
+          {this.state.movies
+            .sort(function(a,b) {
+              if(a.title.toLowerCase() < b.title.toLowerCase()) {
+                return -1
+              }
+              if (a.title.toLowerCase() > b.title.toLowerCase()) {
+                return 1
+              }
+              return 0
+            })
+            .map((item, i) => (
             <Grid item key={item.movieId} sm={6} md={4} lg={3}>
               <MovieCard toggleCheck={this.checkBoxToggle} deleteMovie={this.deleteMovieConfirm} editMovie={this.editMovie} movie={item}/>
             </Grid>
