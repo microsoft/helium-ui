@@ -150,7 +150,18 @@ class App extends React.Component {
 
   // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
-    this.setState({editMovieInput: movie, formsDialog: true, formsTitle:"Edit Movie"});
+    this.setState({editMovieInput: {
+      title: movie.title,
+      year: movie.year,
+      runtime: movie.runtime,
+      textSearch: movie.title.toLowerCase(),
+      roles: '',
+      genres: movie.genres,
+      movieId: movie.movieId,
+      id: movie.movieId,
+      type: movie.type,
+      key: '0'
+    }, formsTitle: "Edit Movie", formsDialog: true})
   }
 
   deleteMultipleMovies = () => {
