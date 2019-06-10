@@ -1,7 +1,5 @@
 import React, {Component} from 'react'; 
-import MoviePH from "../imgs/movieplaceholder.jpg";
-import PropTypes from 'prop-types';
-import {
+import MoviePH from "../imgs/movieplaceholder.jpg";import {
     Card,
     CardActions,
     CardContent,
@@ -14,7 +12,6 @@ import {
     Typography,
   } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import App from '../App';
 import { Movie } from '../models/models';
 
 interface IState {
@@ -52,7 +49,6 @@ class movieComp extends React.Component<IProps> {
             requiredField: false,
         };
     }
-
 
     joinStr(list: string[]): string {
         if (list && list instanceof Array) {
@@ -94,9 +90,7 @@ class movieComp extends React.Component<IProps> {
                           aria-owns={this.state.anchorEl ? 'cardMenu' : undefined}
                           aria-haspopup="true" >
                           <MoreVertIcon />
-                        </IconButton>
-                      }
-                    />
+                        </IconButton> } />
                 <CardMedia
                   style={{height: 0, paddingTop: '56.25%'}}
                   image={MoviePH}
@@ -106,7 +100,9 @@ class movieComp extends React.Component<IProps> {
                         Year: {this.state.movie.year}<br />
                         Runtime: {this.state.movie.runtime}min <br />
                         Genres: {this.joinStr(this.state.movie.genres)}<br />
-                        Key: {this.state.movie.key}<br />
+                    </Typography>
+                    <Typography>
+                        Roles: {this.state.movie.key}
                     </Typography>
                 </CardContent>
                 <CardActions>

@@ -25,6 +25,7 @@ import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
 import { DEFAULT_ENCODING } from 'crypto';
 import { any } from 'prop-types';
+import { Z_FILTERED } from 'zlib';
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -41,11 +42,11 @@ interface IState {
   deleteAlert: boolean,
   requiredField: boolean,
   snackBarMessage: string,
-  editMovie: Movie,
   formsTitle: string,  
   deleteMovies: string[];
   filteredMovies: [];
   deleteId: string,
+  editMovieInput: Movie,
 }
 
 interface IProps {
@@ -66,11 +67,11 @@ class App extends React.Component {
     deleteAlert: false,
     requiredField: false,
     snackBarMessage: '',
-    editMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '',},
     formsTitle: '',
     deleteMovies: [],
     filteredMovies: [],
     deleteId: '',
+    editMovieInput: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0',},
   };
 
   componentDidMount() {
@@ -104,6 +105,9 @@ class App extends React.Component {
     });
   }
 
+  componentDidUpdate() {
+  }
+
   searchToggle = (searchInput: string) => {
 
     //todo
@@ -112,7 +116,7 @@ class App extends React.Component {
 
   // snackbar notification for successful delete of movie"
   deleteMovieConfirm = (id: string, title: string) => {
-    this.setState({snackBarMessage: "received delete cmd for " + title})
+    this.setState({snackBarMessage: "Deleting... " + title})
     this.setState({
       deleteDialog: true, 
       formsTitle: "Delete Movie",
@@ -152,10 +156,7 @@ class App extends React.Component {
 
   // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
-    console.log("movie " + movie);
-    this.setState({editMovie: movie, formsDialog: true, formsTitle:"Edit Movie"});
-    
-    //TO DO: implement axios patch when endpoint is finished
+    this.setState({editMovieInput: movie, formsDialog: true, formsTitle:"Edit Movie"});
   }
 
   deleteMultipleMovies = () => {
@@ -191,13 +192,14 @@ class App extends React.Component {
     }
   }
 
-  submitMyMovie = (values: Movie) => {
-    console.log(values);
-
-   // submits post request of new sample movie to axios
-    axios.post(cors + heliumApi + 'movies', values)
-    .then(action => this.setState({ postSuccessAlert: true, formsDialog: false}))
-    .catch(error => {console.log(error.response)})
+  handleEdit = (values: Movie) => {
+    let temp = this.state.editMovieInput;
+    let movies = this.state.movies;
+    console.log("temp " + temp.title)
+    this.setState({snackBarMessage: "Edited " + this.state.editMovieInput.title + " to " + values.title, formsDialog: false, postSuccessAlert: true});
+  
+    movies.push(values);
+    this.setState({movies});
   }
 
   // on forms submit button clicked
@@ -206,20 +208,23 @@ class App extends React.Component {
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
-      console.log("Edit Movie")
       axios.put(cors + heliumApi + 'movies/' + values.id, values)
-      .then(action => {this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage:"Edited " + values.title})})
+      .then(action => {this.handleEdit(values)})
       .catch(error => {console.log(error.response)})
-      this.setState({ movies: this.state.movies.filter(items => items.movieId != values.id)});
+      this.setState({movies: this.state.movies.filter(items => items.movieId != this.state.editMovieInput.movieId )})
+
     }
 
     // if adding a new movie, performs axios post
     else {
+      console.log(values)
       axios.post(cors + heliumApi + 'movies', values)
       .then(action => this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage:"Added " + values.title}))
       .catch(error => {console.log(error.response)})
+      this.setState({
+        movies: this.state.movies.map(items => items.movieId == values.movieId)
+      });
     }
-
   }
 
   render() { 
@@ -244,7 +249,7 @@ class App extends React.Component {
             <DialogTitle id="form-dialog-title">{this.state.formsTitle}</DialogTitle>
             <DialogContent>
               <Formik
-                initialValues={this.state.editMovie}
+                initialValues={this.state.editMovieInput}
                 validateOnChange= {true}
                 validationSchema={Yup.object().shape({
                   title: Yup.string()
