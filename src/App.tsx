@@ -207,7 +207,19 @@ class App extends React.Component {
     console.log("temp " + temp.title)
     this.setState({snackBarMessage: "Edited " + this.state.editMovieInput.title + " to " + values.title, formsDialog: false, postSuccessAlert: true});
   
-    movies.push(values);
+    // movies.push(values);
+    movies.push({
+      title: values.title,
+      year: values.year,
+      runtime: values.runtime,
+      textSearch: values.title.toLowerCase(),
+      roles: this.state.movieRoles,
+      genres: values.genres,
+      movieId: values.movieId,
+      id: values.movieId,
+      type: values.type,
+      key: values.key,
+    })
     this.setState({movies});
   }
 
