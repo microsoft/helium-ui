@@ -16,7 +16,7 @@ import {
   DialogContentText,
 } from '@material-ui/core';
 import './App.css';
-import { Formik, Field, Form, FormikProps, setNestedObjectValues, FormikActions, FormikProvider } from 'formik';
+import { Formik, Field, Form, FormikProps, FormikActions } from 'formik';
 import { TextField } from 'formik-material-ui';
 import Snackbar from '@material-ui/core/Snackbar';
 import ApplicationBar from './components/applicationBar';
@@ -44,6 +44,7 @@ interface IState {
   filteredMovies: [];
   deleteId: string,
   editMovieInput: Movie,
+  movieRoles: string[],
 }
 
 interface IProps {
@@ -69,6 +70,7 @@ class App extends React.Component {
     filteredMovies: [],
     deleteId: '',
     editMovieInput: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0',},
+    movieRoles: [],
   };
 
   componentDidMount() {
@@ -125,7 +127,7 @@ class App extends React.Component {
 
      if(dMovies.length > 0) {
       let i: number, temp: any;
-      for(let i = 0; i < dMovies.length; i ++ ) {
+      for(i = 0; i < dMovies.length; i ++ ) {
         console.log(dMovies[i]);
         axios.delete(cors + heliumApi + 'movies/' + dMovies[i])
         .then((response: any) => { console.log(response.data);})
@@ -143,13 +145,14 @@ class App extends React.Component {
         .then((response: any) => { console.log(response.data);})
         .catch(error => { console.log(error);})
         this.setState({
-          movies: this.state.movies.filter(items => items.movieId != id)
+          movies: this.state.movies.filter(items => items.movieId !== id)
         });
      }
   }
 
   // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
+    this.setState({formsTitle: "Edit Movie", formsDialog: true, movieRoles: movie.roles})
     this.setState({editMovieInput: {
       title: movie.title,
       year: movie.year,
@@ -161,7 +164,8 @@ class App extends React.Component {
       id: movie.movieId,
       type: movie.type,
       key: '0'
-    }, formsTitle: "Edit Movie", formsDialog: true})
+    }})
+    console.log(this.state.movieRoles)
   }
 
   deleteMultipleMovies = () => {
@@ -216,7 +220,7 @@ class App extends React.Component {
       axios.put(cors + heliumApi + 'movies/' + values.id, values)
       .then(action => {this.handleEdit(values)})
       .catch(error => {console.log(error.response)})
-      this.setState({movies: this.state.movies.filter(items => items.movieId != this.state.editMovieInput.movieId )})
+      this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.editMovieInput.movieId )})
 
     }
 
@@ -227,14 +231,12 @@ class App extends React.Component {
       .then(action => this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage:"Added " + values.title}))
       .catch(error => {console.log(error.response)})
       this.setState({
-        movies: this.state.movies.map(items => items.movieId == values.movieId)
+        movies: this.state.movies.map(items => items.movieId === values.movieId)
       });
     }
   }
 
   render() { 
-    const { anchorEl } = this.state;
-
     return (
       <React.Fragment>
       <ApplicationBar handleSearchChange={this.searchToggle}/>
