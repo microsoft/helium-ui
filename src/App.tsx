@@ -23,9 +23,6 @@ import ApplicationBar from './components/applicationBar';
 import MovieCard from './components/movieComp';
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
-import { DEFAULT_ENCODING } from 'crypto';
-import { any } from 'prop-types';
-import { Z_FILTERED } from 'zlib';
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -103,9 +100,6 @@ class App extends React.Component {
     .catch(error => {
       console.log(error);
     });
-  }
-
-  componentDidUpdate() {
   }
 
   searchToggle = (searchInput: string) => {
