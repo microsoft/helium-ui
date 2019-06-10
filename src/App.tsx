@@ -235,22 +235,17 @@ class App extends React.Component {
     }
 
     // if adding a new movie, performs axios post
-    else {
-      console.log(values)
+    if(this.state.formsTitle === "Add Movie") {
+      let movies = this.state.movies;
       axios.post(cors + heliumApi + 'movies', values)
       .then(action => this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage:"Added " + values.title}))
       .catch(error => {console.log(error.response)})
-      this.setState({
-        movies: this.state.movies.map(items => items.movieId === values.movieId)
-      });
+      movies.push(values);
+      this.setState({movies})
     }
   }
 
-  sort() {
-
-  }
   render() { 
-    
     return (
       <React.Fragment>
       <ApplicationBar handleSearchChange={this.searchToggle}/>
