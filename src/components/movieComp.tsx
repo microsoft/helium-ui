@@ -1,7 +1,5 @@
 import React, {Component} from 'react'; 
-import MoviePH from "../imgs/movieplaceholder.jpg";
-import PropTypes from 'prop-types';
-import {
+import MoviePH from "../imgs/movieplaceholder.jpg";import {
     Card,
     CardActions,
     CardContent,
@@ -14,7 +12,6 @@ import {
     Typography,
   } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import App from '../App';
 import { Movie } from '../models/models';
 
 interface IState {
@@ -53,7 +50,6 @@ class movieComp extends React.Component<IProps> {
         };
     }
 
-
     joinStr(list: string[]): string {
         if (list && list instanceof Array) {
             return list.join(', ')
@@ -68,8 +64,6 @@ class movieComp extends React.Component<IProps> {
     deleteMovie = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         console.log("delete " + this.state.movie.movieId);
         this.props.deleteMovie(this.state.movie.movieId, this.state.movie.title);
-        // console.log("delete " + this.state.movie);
-        // this.props.deleteMovie(this.state.movie);
     }
 
     editMovie = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
@@ -85,44 +79,40 @@ class movieComp extends React.Component<IProps> {
     render() {  
         return (
             <div>
-                <Card>
-                <CardHeader 
-                    title = {this.state.movie.title.substring(0,30)}
-                    action = {
-                        <IconButton 
-                          onClick={this.handleMenuClick}
-                          aria-owns={this.state.anchorEl ? 'cardMenu' : undefined}
-                          aria-haspopup="true" >
-                          <MoreVertIcon />
-                        </IconButton>
-                      }
-                    />
-                <CardMedia
-                  style={{height: 0, paddingTop: '56.25%'}}
-                  image={MoviePH}
-                  title="img"/>
-                <CardContent>
-                    <Typography>
-                        Year: {this.state.movie.year}<br />
-                        Runtime: {this.state.movie.runtime}min <br />
-                        Genres: {this.joinStr(this.state.movie.genres)}<br />
-                        Key: {this.state.movie.key}<br />
-                    </Typography>
-                </CardContent>
-                <CardActions>
-                    {/* <Typography color="primary">Delete</Typography> */}
-                    <Checkbox color="primary" checked={this.state.checkedBox} onChange={this.toggleCheck}/>
-                </CardActions>
-                </Card>
-                <Menu
-                    id="cardMenu"
-                    anchorEl={this.state.anchorEl}
-                    open={Boolean(this.state.anchorEl)}
-                    onClose={() => this.setState({ anchorEl: null })} >
-                    <MenuItem onClick={(this.deleteMovie)}>Delete</MenuItem>
-                    <MenuItem onClick={(this.editMovie)}>Edit</MenuItem>
-                </Menu>  
-            </div>
+            <Card>
+            <CardHeader 
+                title = {this.state.movie.title.substring(0,30)}
+                action = {
+                    <IconButton 
+                        onClick={this.handleMenuClick}
+                        aria-owns={this.state.anchorEl ? 'cardMenu' : undefined}
+                        aria-haspopup="true" >
+                        <MoreVertIcon />
+                    </IconButton> } />
+            <CardMedia
+                style={{height: 0, paddingTop: '56.25%'}}
+                image={MoviePH}
+                title="img"/>
+            <CardContent>
+                <Typography>
+                    Year: {this.state.movie.year}<br />
+                    Runtime: {this.state.movie.runtime}min <br />
+                    Genres: {this.joinStr(this.state.movie.genres)}<br />
+                </Typography>
+            </CardContent>
+            <CardActions>
+                <Checkbox color="primary" checked={this.state.checkedBox} onChange={this.toggleCheck}/>
+            </CardActions>
+            </Card>
+            <Menu
+                id="cardMenu"
+                anchorEl={this.state.anchorEl}
+                open={Boolean(this.state.anchorEl)}
+                onClose={() => this.setState({ anchorEl: null })} >
+                <MenuItem onClick={(this.deleteMovie)}>Delete</MenuItem>
+                <MenuItem onClick={(this.editMovie)}>Edit</MenuItem>
+            </Menu>  
+        </div>
         )
     }
 }
