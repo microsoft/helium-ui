@@ -4,26 +4,20 @@ import Balloon from "../imgs/balloon.svg";
 import SearchIcon  from '@material-ui/icons/Search';
 
 interface IProps {
-    handleSearchChange: (searchInput: string) => void;
+    handleSearchChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 interface IState {
     searchInput: string,
 }
-class applicationBar extends React.Component<IProps> {
 
+class applicationBar extends React.Component<IProps> {
     state: IState
     constructor(props:IProps) {
         super(props);
         this.state = {
             searchInput: '',
         };
-    }
-
-    // grab input of search bar
-    handleSearchChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        this.setState({searchInput: event.currentTarget.value});
-        this.props.handleSearchChange(this.state.searchInput)
     }
 
     render() {  
@@ -36,8 +30,8 @@ class applicationBar extends React.Component<IProps> {
                         <div className="searchBar">
                             <SearchIcon />
                             <InputBase
-                            placeholder="Search..." 
-                            onChange={this.handleSearchChange} /> 
+                            placeholder="Search by title..." 
+                            onChange={this.props.handleSearchChange} /> 
                         </div>
                     </Toolbar>
                 </AppBar>          
