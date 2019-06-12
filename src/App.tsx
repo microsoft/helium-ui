@@ -41,10 +41,11 @@ interface IState {
   snackBarMessage: string,
   formsTitle: string,  
   deleteMovies: string[];
-  filteredMovies: [];
+  filteredMovies: Movie[];
   deleteId: string,
   editMovieInput: Movie,
   movieRoles: string[],
+  textSearch: string,
 }
 
 interface IProps {
@@ -71,6 +72,7 @@ class App extends React.Component {
     deleteId: '',
     editMovieInput: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0',},
     movieRoles: [],
+    textSearch: '',
   };
 
   componentDidMount() {
@@ -104,10 +106,12 @@ class App extends React.Component {
     });
   }
 
-  searchToggle = (searchInput: string) => {
+  // handle input of search bar
+  searchToggle = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
 
-    //todo
-
+    const val = event.target.value.toLowerCase();
+    this.setState({textSearch: val})
+   
   }
 
   // snackbar notification for successful delete of movie"
@@ -201,6 +205,7 @@ class App extends React.Component {
     }
   }
 
+  // handles edit on exisiting movie's form
   handleEdit = (values: Movie) => {
     let temp = this.state.editMovieInput;
     let movies = this.state.movies;
@@ -245,6 +250,19 @@ class App extends React.Component {
     }
   }
 
+  // filters movies based on users text search 
+  handleToggle = (movie: Movie) => {
+    let input = this.state.textSearch;
+
+    if(this.state.textSearch === '') {
+      return true;
+    }
+
+    if(movie.title.toLowerCase().includes(input))  {
+      return movie;
+    } 
+  }
+
   render() { 
     return (
       <React.Fragment>
@@ -261,6 +279,7 @@ class App extends React.Component {
               }
               return 0
             })
+            .filter(this.handleToggle)
             .map((item, i) => (
             <Grid item key={item.movieId} sm={6} md={4} lg={3}>
               <MovieCard toggleCheck={this.checkBoxToggle} deleteMovie={this.deleteMovieConfirm} editMovie={this.editMovie} movie={item}/>
