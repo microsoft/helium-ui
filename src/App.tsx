@@ -41,7 +41,6 @@ interface IState {
   snackBarMessage: string,
   formsTitle: string,  
   deleteMovies: string[];
-  filteredMovies: Movie[];
   deleteId: string,
   editMovieInput: Movie,
   movieRoles: string[],
@@ -68,7 +67,6 @@ class App extends React.Component {
     snackBarMessage: '',
     formsTitle: '',
     deleteMovies: [],
-    filteredMovies: [],
     deleteId: '',
     editMovieInput: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0',},
     movieRoles: [],
@@ -108,10 +106,8 @@ class App extends React.Component {
 
   // handle input of search bar
   searchToggle = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-
     const val = event.target.value.toLowerCase();
     this.setState({textSearch: val})
-   
   }
 
   // snackbar notification for successful delete of movie"
@@ -143,8 +139,7 @@ class App extends React.Component {
       this.setState({movies: temp});
       this.setState({snackBarMessage: "Deleting... " + this.state.deleteMovies})
 
-    }
-     else {
+    } else {
         axios.delete(cors + heliumApi + 'movies/' + id)
         .then((response: any) => { console.log(response.data);})
         .catch(error => { console.log(error);})
@@ -179,8 +174,7 @@ class App extends React.Component {
     if(moviesAr.length === 0) {
       this.setState({snackBarMessage:"Please select a movie (or movies) using the checkbox to delete it"}) 
       this.setState({deleteAlert: true}) 
-    }
-    else {
+    } else {
       this.setState({deleteDialog: true, formsTitle: "Delete Movies"})
     }
   }
@@ -251,7 +245,7 @@ class App extends React.Component {
   }
 
   // filters movies based on users text search 
-  handleToggle = (movie: Movie) => {
+  handleSearchFilter = (movie: Movie) => {
     let input = this.state.textSearch;
 
     if(this.state.textSearch === '') {
@@ -279,12 +273,11 @@ class App extends React.Component {
               }
               return 0
             })
-            .filter(this.handleToggle)
+            .filter(this.handleSearchFilter)
             .map((item, i) => (
             <Grid item key={item.movieId} sm={6} md={4} lg={3}>
               <MovieCard toggleCheck={this.checkBoxToggle} deleteMovie={this.deleteMovieConfirm} editMovie={this.editMovie} movie={item}/>
-            </Grid>
-          ))}
+            </Grid> ))}
         </Grid>
       </main>
       <div className="dialogs">
@@ -397,9 +390,7 @@ class App extends React.Component {
                         <Button color="primary" onClick={() => this.setState({formsDialog: false})}>Cancel</Button>
                         <Button color="primary" type="submit">Submit</Button>
                       </div>
-                  </Form>
-                )}
-              />
+                  </Form> )}/>
           </DialogContent>
         </Dialog> 
       </div>
@@ -480,6 +471,5 @@ class App extends React.Component {
     );
   }
 }
-
 
 export default App;
