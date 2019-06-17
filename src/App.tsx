@@ -200,42 +200,49 @@ class App extends React.Component {
   }
 
   // handles edit on exisiting movie's form
-  handleEdit = (values: Movie) => {
-    let temp = this.state.formsMovie;
+  handleEdit = (subMovie: Movie) => {
     let movies = this.state.movies;
-    console.log("temp " + temp.title)
-    this.setState({snackBarMessage: "Edited " + this.state.formsMovie.title + " to " + values.title, openForms: false, postSuccessAlert: true});
+    this.setState({snackBarMessage: "Edited " + this.state.formsMovie.title + " to " + subMovie.title, openForms: false, postSuccessAlert: true});
   
-    movies.push({
-      title: values.title,
-      year: values.year,
-      runtime: values.runtime,
-      textSearch: values.title.toLowerCase(),
-      roles: this.state.movieRoles,
-      genres: values.genres,
-      movieId: values.movieId,
-      id: values.movieId,
-      type: values.type,
-      key: values.key,
-    })
-    this.setState({movies});
+    movies.push(subMovie);
+    this.setState({movies})
   }
 
   // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
-    
+    let movies = this.state.movies;
+
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
-      axios.put(cors + heliumApi + 'movies/' + values.id, values)
-      .then(action => {this.handleEdit(values)})
+      let rolestoPush;
+      let subMovie: Movie;
+      
+      if(values.roles === null) {
+        rolestoPush = this.state.movieRoles; }
+      else { rolestoPush = values.roles }
+
+      subMovie = {
+        title: values.title,
+        year: values.year,
+        runtime: values.runtime,
+        textSearch: values.title.toLowerCase(),
+        roles: rolestoPush,
+        genres: values.genres,
+        movieId: values.movieId,
+        id: values.movieId,
+        type: 'Movie',
+        key: '0',
+      };
+
+      axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
+      .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
-      this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
+      this.setState({movies: this.state.movies.filter(items => items.movieId !== subMovie.movieId )})
     }
 
     // if adding a new movie, performs axios post
     if(this.state.formsTitle === "Add Movie") {
-      let movies = this.state.movies;
       axios.post(cors + heliumApi + 'movies', values)
       .then(action => this.setState({ postSuccessAlert: true, openForms: false, snackBarMessage:"Added " + values.title}))
       .catch(error => {console.log(error.response)})
@@ -251,8 +258,7 @@ class App extends React.Component {
     if(this.state.textSearch === '') {
       return true;
     }
-
-    if(movie.title.toLowerCase().includes(input))  {
+    if(movie.title.toLowerCase().includes(input)){
       return movie;
     } 
   }
@@ -266,11 +272,9 @@ class App extends React.Component {
           {this.state.movies
             .sort(function(a,b) {
               if(a.title.toLowerCase() < b.title.toLowerCase()) {
-                return -1
-              }
+                return -1 }
               if (a.title.toLowerCase() > b.title.toLowerCase()) {
-                return 1
-              }
+                return 1 }
               return 0
             })
             .filter(this.handleSearchFilter)
@@ -292,25 +296,17 @@ class App extends React.Component {
                 validationSchema={Yup.object().shape({
                   title: Yup.string()
                   .required('Title Required'),
-                  id: Yup.string()
-                    .required('ID Required'),
                   year: Yup.string()
                     .required('Year Required'),
                   runtime: Yup.string()
                     .required('Runtime Required'),
-                  textSearch: Yup.string()
-                    .strict(true)
-                    .lowercase('Value must be lowercase')
-                    .required('TextSearch Required'),
                   movieId: Yup.string()
-                    .required('Required'),
-                  key: Yup.string() 
-                    .required('Required')                                       
+                    .required('Required'),                                   
                 })}
                 onSubmit={this.submitMovie}
                 render={(formikBag: FormikProps<Movie>) => (
                   <Form autoComplete="on">
-                    <Field
+                   <Field
                       required
                       name="title"
                       label="Title"
@@ -333,14 +329,6 @@ class App extends React.Component {
                       component={TextField}
                       margin="dense" />
                     <Field
-                      required
-                      name="textSearch"
-                      label="Text Search"
-                      type="text"
-                      component={TextField}
-                      fullWidth
-                      margin="normal" />
-                    <Field
                       name="roles"
                       label="Roles"
                       type="text"
@@ -359,31 +347,6 @@ class App extends React.Component {
                       name="movieId"
                       label="Movie ID"
                       type="text"
-                      component={TextField}
-                      margin="dense" />           
-                    <Field 
-                      required
-                      name="id"
-                      label="Id"
-                      type="text"
-                      component={TextField}
-                      margin="dense" />
-                    <Field 
-                      required
-                      name="type"
-                      label="Type"
-                      type="text"
-                      value="Movie"
-                      component={TextField}
-                      fullWidth
-                      margin="normal"   
-                      InputProps={{readOnly: true}} />
-                    <Field 
-                      required
-                      name="key"
-                      label="Key"
-                      type="text"
-                      value="0"
                       component={TextField}
                       margin="dense" />
                       <div className="formButtons">
@@ -413,8 +376,7 @@ class App extends React.Component {
         autoHideDuration={6000}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'center',
-        }}
+          horizontal: 'center' }}
         open={this.state.postSuccessAlert}
         message={<span id="postSuccessMessage">{this.state.snackBarMessage}</span>}
         action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, openForms: false })}><CloseIcon color="primary" /></IconButton>]} />
@@ -423,8 +385,7 @@ class App extends React.Component {
         autoHideDuration={6000}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'center',
-        }}
+          horizontal: 'center' }}
         open={this.state.postFailureAlert}
         message={<span id="postFailureMessage">Failed to Add Movie</span>}
         action={[<IconButton onClick={() => this.setState({postFailureAlert: false, openForms: false })}><CloseIcon color="primary" /></IconButton>]} />
@@ -433,8 +394,7 @@ class App extends React.Component {
         autoHideDuration={6000}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'center',
-        }}
+          horizontal: 'center' }}
         open={this.state.deleteAlert}
         message={<span id="deleteMessage">{this.state.snackBarMessage}</span>}
         action={[<IconButton onClick={() => this.setState({deleteAlert: false})}><CloseIcon color="primary" /></IconButton>]} />
@@ -443,8 +403,7 @@ class App extends React.Component {
         autoHideDuration={6000}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'center',
-        }}
+          horizontal: 'center' }}
         open={this.state.requiredField}
         message={<span id="deleteMessage">Required Field</span>}
         action={[<IconButton onClick={() => this.setState({requiredField: false})}><CloseIcon color="primary" /></IconButton>]} />
