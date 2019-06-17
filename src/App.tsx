@@ -32,7 +32,7 @@ interface IState {
   actors: Actor[];
   genres: Genre[];
   anchorEl: HTMLElement | null;
-  formsDialog: boolean,
+  openForms: boolean,
   deleteDialog: boolean,
   postSuccessAlert: boolean,
   postFailureAlert: boolean,
@@ -42,7 +42,7 @@ interface IState {
   formsTitle: string,  
   deleteMovies: string[];
   deleteId: string,
-  editMovieInput: Movie,
+  formsMovie: Movie,
   movieRoles: string[],
   textSearch: string,
 }
@@ -58,7 +58,7 @@ class App extends React.Component {
     genres: [],
     actors: [],
     anchorEl: null,
-    formsDialog: false,
+    openForms: false,
     deleteDialog: false,
     postSuccessAlert: false,
     postFailureAlert: false,
@@ -68,7 +68,7 @@ class App extends React.Component {
     formsTitle: '',
     deleteMovies: [],
     deleteId: '',
-    editMovieInput: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0',},
+    formsMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0',},
     movieRoles: [],
     textSearch: '',
   };
@@ -151,8 +151,8 @@ class App extends React.Component {
 
   // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
-    this.setState({formsTitle: "Edit Movie", formsDialog: true, movieRoles: movie.roles})
-    this.setState({editMovieInput: {
+    this.setState({formsTitle: "Edit Movie", openForms: true, movieRoles: movie.roles})
+    this.setState({formsMovie: {
       title: movie.title,
       year: movie.year,
       runtime: movie.runtime,
@@ -201,10 +201,10 @@ class App extends React.Component {
 
   // handles edit on exisiting movie's form
   handleEdit = (values: Movie) => {
-    let temp = this.state.editMovieInput;
+    let temp = this.state.formsMovie;
     let movies = this.state.movies;
     console.log("temp " + temp.title)
-    this.setState({snackBarMessage: "Edited " + this.state.editMovieInput.title + " to " + values.title, formsDialog: false, postSuccessAlert: true});
+    this.setState({snackBarMessage: "Edited " + this.state.formsMovie.title + " to " + values.title, openForms: false, postSuccessAlert: true});
   
     movies.push({
       title: values.title,
@@ -230,14 +230,14 @@ class App extends React.Component {
       axios.put(cors + heliumApi + 'movies/' + values.id, values)
       .then(action => {this.handleEdit(values)})
       .catch(error => {console.log(error.response)})
-      this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.editMovieInput.movieId )})
+      this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
     }
 
     // if adding a new movie, performs axios post
     if(this.state.formsTitle === "Add Movie") {
       let movies = this.state.movies;
       axios.post(cors + heliumApi + 'movies', values)
-      .then(action => this.setState({ postSuccessAlert: true, formsDialog: false, snackBarMessage:"Added " + values.title}))
+      .then(action => this.setState({ postSuccessAlert: true, openForms: false, snackBarMessage:"Added " + values.title}))
       .catch(error => {console.log(error.response)})
       movies.push(values);
       this.setState({movies})
@@ -282,12 +282,12 @@ class App extends React.Component {
       </main>
       <div className="dialogs">
           <Dialog     
-            open={this.state.formsDialog}
+            open={this.state.openForms}
             aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">{this.state.formsTitle}</DialogTitle>
             <DialogContent>
               <Formik
-                initialValues={this.state.editMovieInput}
+                initialValues={this.state.formsMovie}
                 validateOnChange= {true}
                 validationSchema={Yup.object().shape({
                   title: Yup.string()
@@ -387,7 +387,7 @@ class App extends React.Component {
                       component={TextField}
                       margin="dense" />
                       <div className="formButtons">
-                        <Button color="primary" onClick={() => this.setState({formsDialog: false})}>Cancel</Button>
+                        <Button color="primary" onClick={() => this.setState({openForms: false})}>Cancel</Button>
                         <Button color="primary" type="submit">Submit</Button>
                       </div>
                   </Form> )}/>
@@ -402,12 +402,8 @@ class App extends React.Component {
             <DialogContentText>Are you sure you want to delete this movie?</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => this.setState({deleteDialog: false})} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={() => this.deleteMovie(this.state.deleteId)} color="primary" autoFocus>
-              Confirm
-            </Button>
+            <Button onClick={() => this.setState({deleteDialog: false})} color="primary"> Cancel </Button>
+            <Button onClick={() => this.deleteMovie(this.state.deleteId)} color="primary" autoFocus> Confirm </Button>
           </DialogActions>
         </Dialog>
       </div>
@@ -421,7 +417,7 @@ class App extends React.Component {
         }}
         open={this.state.postSuccessAlert}
         message={<span id="postSuccessMessage">{this.state.snackBarMessage}</span>}
-        action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]} />
+        action={[<IconButton onClick={() => this.setState({postSuccessAlert: false, openForms: false })}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="postFailureAlert"
         autoHideDuration={6000}
@@ -431,7 +427,7 @@ class App extends React.Component {
         }}
         open={this.state.postFailureAlert}
         message={<span id="postFailureMessage">Failed to Add Movie</span>}
-        action={[<IconButton onClick={() => this.setState({postFailureAlert: false, formsDialog: false })}><CloseIcon color="primary" /></IconButton>]} />
+        action={[<IconButton onClick={() => this.setState({postFailureAlert: false, openForms: false })}><CloseIcon color="primary" /></IconButton>]} />
       <Snackbar
         className="deleteAlert"
         autoHideDuration={6000}
@@ -454,7 +450,7 @@ class App extends React.Component {
         action={[<IconButton onClick={() => this.setState({requiredField: false})}><CloseIcon color="primary" /></IconButton>]} />
       </div>
       <div className="fab"> 
-        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({formsDialog: true, formsTitle:"Add Movie", editMovieInput: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0'}})} color="primary" >
+        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({openForms: true, formsTitle:"Add Movie", formsMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0'}})} color="primary" >
           <AddIcon />
         </Fab>
         <Fab aria-label="deleteMultipleMovie" color="secondary" onClick={(this.deleteMultipleMovies)} className="deleteFAB">
