@@ -156,13 +156,9 @@ class App extends React.Component {
       title: movie.title,
       year: movie.year,
       runtime: movie.runtime,
-      textSearch: movie.title.toLowerCase(),
       roles: '',
       genres: movie.genres,
       movieId: movie.movieId,
-      id: movie.movieId,
-      type: movie.type,
-      key: '0'
     }})
     console.log(this.state.movieRoles)
   }
@@ -238,7 +234,7 @@ class App extends React.Component {
       axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
       .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
-      this.setState({movies: this.state.movies.filter(items => items.movieId !== subMovie.movieId )})
+      this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
     }
 
     // if adding a new movie, performs axios post
