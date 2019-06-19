@@ -14,6 +14,11 @@ import {
   Button,
   Fab,
   DialogContentText,
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails,
+  Chip,
+  InputLabel,
 } from '@material-ui/core';
 import './App.css';
 import { Formik, Field, Form, FormikProps, FormikActions } from 'formik';
@@ -45,6 +50,7 @@ interface IState {
   formsMovie: Movie,
   movieRoles: string[],
   textSearch: string,
+  genreOptions: string[],
 }
 
 interface IProps {
@@ -71,6 +77,8 @@ class App extends React.Component {
     formsMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0',},
     movieRoles: [],
     textSearch: '',
+    genreOptions: [ "history", "horror", "documentary", "sport", "family", "thriller", "music", "sci-fi", "musical", "mystery", "drama",
+    "biography", "animation", "action", "war", "fantasy", "adventure", "comedy", "crime", "romance"],
   };
 
   componentDidMount() {
@@ -330,7 +338,30 @@ class App extends React.Component {
                       type="text"
                       component={TextField}
                       fullWidth
-                      margin="normal" />           
+                      margin="normal" />
+                                          <div>
+                      <br/>
+                      <InputLabel>Genres</InputLabel>
+                        <div> <Chip label="Genres"/></div>     
+                    </div>   
+                    <ExpansionPanel defaultExpanded>
+                      <ExpansionPanelSummary>
+                        <div>
+                          <Typography>Genres</Typography>
+                        </div>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails>
+                         <div>
+                          {this.state.genreOptions.map(option => (
+                            <Chip label={option} onDelete={() => {this.setState({genreOptions: this.state.genreOptions.filter(genres => genres !== option)})}}/>
+                          ))}                             
+                            <div className="genresButtons" >
+                              <Button color="secondary" onClick={() => {}}>Cancel</Button>
+                              <Button color="primary" type="submit">Save</Button>
+                           </div>
+                        </div>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>           
                     <Field
                       name="genres"
                       label="Genres"
