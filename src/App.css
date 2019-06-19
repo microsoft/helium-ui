@@ -13,11 +13,6 @@
   border: 5px dotted pink;
 }
 
-.searchBar {
-  position: relative;
-  margin-left: 75%;  
-}
-
 .fab {
   position: fixed;
   right:0;
