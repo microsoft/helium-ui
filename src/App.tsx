@@ -339,10 +339,15 @@ class App extends React.Component {
                       component={TextField}
                       fullWidth
                       margin="normal" />
-                                          <div>
+                    <div>
                       <br/>
                       <InputLabel>Genres</InputLabel>
-                        <div> <Chip label="Genres"/></div>     
+                      <div>
+                      {this.state.formsMovie.genres.map(item => (
+                        <Chip color="primary" label={item}/>
+                        ))}
+                        <br />
+                      </div>
                     </div>   
                     <ExpansionPanel defaultExpanded>
                       <ExpansionPanelSummary>
