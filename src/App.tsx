@@ -19,7 +19,10 @@ import {
   ExpansionPanelDetails,
   Chip,
   InputLabel,
+  Collapse,
 } from '@material-ui/core';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import './App.css';
 import { Formik, Field, Form, FormikProps, FormikActions } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -51,6 +54,7 @@ interface IState {
   movieRoles: string[],
   textSearch: string,
   genreOptions: string[],
+  expandGenres: boolean,
 }
 
 interface IProps {
@@ -79,6 +83,7 @@ class App extends React.Component {
     textSearch: '',
     genreOptions: [ "history", "horror", "documentary", "sport", "family", "thriller", "music", "sci-fi", "musical", "mystery", "drama",
     "biography", "animation", "action", "war", "fantasy", "adventure", "comedy", "crime", "romance"],
+    expandGenres: false,
   };
 
   componentDidMount() {
@@ -159,7 +164,7 @@ class App extends React.Component {
 
   // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
-    this.setState({formsTitle: "Edit Movie", openForms: true, movieRoles: movie.roles})
+    this.setState({formsTitle: "Edit Movie", openForms: true, expandGenres: false, movieRoles: movie.roles})
     this.setState({formsMovie: {
       title: movie.title,
       year: movie.year,
@@ -342,38 +347,26 @@ class App extends React.Component {
                     <div>
                       <br/>
                       <InputLabel>Genres</InputLabel>
+                      <AddIcon onClick={() => {this.setState({expandGenres: !this.state.expandGenres})}}/>
                       <div>
                       {this.state.formsMovie.genres.map(item => (
-                        <Chip color="primary" label={item}/>
+                        <Chip color="primary" label={item} onDelete={() => {}}/>
                         ))}
                         <br />
                       </div>
                     </div>   
-                    <ExpansionPanel defaultExpanded>
-                      <ExpansionPanelSummary>
-                        <div>
-                          <Typography>Genres</Typography>
-                        </div>
-                      </ExpansionPanelSummary>
-                      <ExpansionPanelDetails>
-                         <div>
+                    <div className="addGenres ">
+                      <Collapse in={this.state.expandGenres} timeout="auto" unmountOnExit>
+                        <br />
                           {this.state.genreOptions.map(option => (
                             <Chip label={option} onDelete={() => {this.setState({genreOptions: this.state.genreOptions.filter(genres => genres !== option)})}}/>
                           ))}                             
-                            <div className="genresButtons" >
+                            <div className="formButtons" >
                               <Button color="secondary" onClick={() => {}}>Cancel</Button>
                               <Button color="primary" type="submit">Save</Button>
-                           </div>
-                        </div>
-                      </ExpansionPanelDetails>
-                    </ExpansionPanel>           
-                    <Field
-                      name="genres"
-                      label="Genres"
-                      type="text"
-                      component={TextField}
-                      fullWidth
-                      margin="normal" />   
+                          </div>
+                      </Collapse>
+                    </div>    
                     <Field
                       required
                       name="movieId"
@@ -441,7 +434,7 @@ class App extends React.Component {
         action={[<IconButton onClick={() => this.setState({requiredField: false})}><CloseIcon color="primary" /></IconButton>]} />
       </div>
       <div className="fab"> 
-        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({openForms: true, formsTitle:"Add Movie", formsMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0'}})} color="primary" >
+        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({openForms: true, expandGenres: false,formsTitle:"Add Movie", formsMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0'}})} color="primary" >
           <AddIcon />
         </Fab>
         <Fab aria-label="deleteMultipleMovie" color="secondary" onClick={(this.deleteMultipleMovies)} className="deleteFAB">
