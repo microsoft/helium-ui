@@ -279,7 +279,15 @@ class App extends React.Component {
 
     console.log(this.state.formsMovie.genres);
     this.state.formsMovie.genres.push(selected);
-  
+  }
+
+  handleGenreRemove = (selected: string) => {
+    console.log(selected);
+    
+
+    this.setState({formsMovie: {
+      genres: this.state.formsMovie.genres.filter(genres => genres !== selected),
+    }});
   }
 
   render() { 
@@ -359,8 +367,8 @@ class App extends React.Component {
                       <InputLabel>Genres</InputLabel>
                       <AddIcon onClick={() => {this.setState({expandGenres: !this.state.expandGenres})}}/>
                       <div>
-                      {this.state.formsMovie.genres.map(item => (
-                        <Chip color="primary" label={item} onDelete={() => {}}/>
+                      {this.state.formsMovie.genres.map(selected => (
+                        <Chip color="primary" label={selected} onDelete={() => {this.handleGenreRemove(selected)}}/>
                         ))}
                         <br />
                       </div>
