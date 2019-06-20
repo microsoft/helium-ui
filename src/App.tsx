@@ -284,10 +284,12 @@ class App extends React.Component {
   handleGenreRemove = (selected: string) => {
     console.log(selected);
     
-
     this.setState({formsMovie: {
       genres: this.state.formsMovie.genres.filter(genres => genres !== selected),
     }});
+
+    //add back to list
+    this.state.genreOptions.push(selected);
   }
 
   render() { 
