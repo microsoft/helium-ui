@@ -21,6 +21,17 @@ import {
   Chip,
   InputLabel,
   Collapse,
+  List,
+  ListSubheader,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  FormControl,
+  MenuItem,
+  Select,
+  NativeSelect,
+  FormHelperText,
+  Input,
 } from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -57,6 +68,7 @@ interface IState {
   textSearch: string,
   genreOptions: string[],
   expandGenres: boolean,
+  expandList: boolean,
 }
 
 interface IProps {
@@ -86,6 +98,7 @@ class App extends React.Component {
     genreOptions: [ "history", "horror", "documentary", "sport", "family", "thriller", "music", "sci-fi", "musical", "mystery", "drama",
     "biography", "animation", "action", "war", "fantasy", "adventure", "comedy", "crime", "romance"],
     expandGenres: false,
+    expandList: false,
   };
 
   componentDidMount() {
@@ -274,14 +287,6 @@ class App extends React.Component {
     } 
   }
 
-  handleGenreSelection = (selected: string) => {
-    //remove selected genre from list
-    this.setState({genreOptions: this.state.genreOptions.filter(genres => genres !== selected)})
-
-    console.log(this.state.formsMovie.genres);
-    this.state.formsMovie.genres.push(selected);
-  }
-
   handleGenreRemove = (selected: string) => {
     console.log(selected);
     
@@ -291,6 +296,17 @@ class App extends React.Component {
 
     //add back to list
     this.state.genreOptions.push(selected);
+  }
+
+  handleSelectGenre = (event: any) => {
+    let selectedGenre = event.target.value;
+    console.log("selected " + event.target.value);
+    this.state.formsMovie.genres.push(selectedGenre);
+
+    // this.setState({formsMovie: {
+    //   genres: this.state.formsMovie.genres.filter(genres => genres !== selectedGenre),
+    // }});
+
   }
 
   render() { 
@@ -368,9 +384,6 @@ class App extends React.Component {
                     <div>
                       <br/>
                       <InputLabel>Genres</InputLabel>
-                      <IconButton>
-                        <AddIcon onClick={() => {this.setState({expandGenres: !this.state.expandGenres})}}/>
-                      </IconButton>
                       <div>
                       {this.state.formsMovie.genres.map(selected => (
                         <Chip color="primary" label={selected} onDelete={() => {this.handleGenreRemove(selected)}}/>
@@ -378,19 +391,28 @@ class App extends React.Component {
                         <br />
                       </div>
                     </div>   
-                    <div className="addGenres ">
-                      <Collapse in={this.state.expandGenres} timeout="auto" unmountOnExit>
-                        <br />
-                          {this.state.genreOptions.map(selected => (
-                            <Chip label={selected} deleteIcon={<AddIcon/>} color="secondary" 
-                            onDelete={() => { this.handleGenreSelection(selected)}}/>
-                          ))}                             
-                            <div className="formButtons" >
-                              <Button color="secondary" onClick={() => {}}>Cancel</Button>
-                              <Button color="primary" type="submit">Save</Button>
-                          </div>
-                      </Collapse>
-                    </div>    
+                    <div> 
+                      <br/>
+                      <InputLabel>Add Genres:</InputLabel>
+                      <Select
+                        // multiple
+                        // input = {<Input id="select-multiple" />}
+                        open={this.state.expandList}
+                        onOpen={() => {this.setState({expandList: true})}}
+                        onClose={() => {this.setState({expandList: false})}}
+                        onChange={this.handleSelectGenre}
+                        // renderValue={selected => (
+                        //   <div>
+                        //     <Chip label={selected}/>
+                        //   </div>
+                        // )}
+                      >
+                      <FormHelperText>Placeholder</FormHelperText>
+                      {this.state.genreOptions.map(genre => (
+                        <MenuItem key={genre} value={genre}>{genre}</MenuItem>
+                      ))}
+                      </Select>
+                    </div>
                     <Field
                       required
                       name="movieId"
