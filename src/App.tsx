@@ -31,6 +31,7 @@ import ApplicationBar from './components/applicationBar';
 import MovieCard from './components/movieComp';
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
+import { optionalCallExpression } from '@babel/types';
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
@@ -272,6 +273,15 @@ class App extends React.Component {
     } 
   }
 
+  handleGenreSelection = (selected: string) => {
+    //remove selected genre from list
+    this.setState({genreOptions: this.state.genreOptions.filter(genres => genres !== selected)})
+
+    console.log(this.state.formsMovie.genres);
+    this.state.formsMovie.genres.push(selected);
+  
+  }
+
   render() { 
     return (
       <React.Fragment>
@@ -358,8 +368,9 @@ class App extends React.Component {
                     <div className="addGenres ">
                       <Collapse in={this.state.expandGenres} timeout="auto" unmountOnExit>
                         <br />
-                          {this.state.genreOptions.map(option => (
-                            <Chip label={option} deleteIcon={<AddIcon/>} color="secondary" onDelete={() => {this.setState({genreOptions: this.state.genreOptions.filter(genres => genres !== option)})}}/>
+                          {this.state.genreOptions.map(selected => (
+                            <Chip label={selected} deleteIcon={<AddIcon/>} color="secondary" 
+                            onDelete={() => { this.handleGenreSelection(selected)}}/>
                           ))}                             
                             <div className="formButtons" >
                               <Button color="secondary" onClick={() => {}}>Cancel</Button>
