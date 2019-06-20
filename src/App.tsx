@@ -359,7 +359,7 @@ class App extends React.Component {
                       <Collapse in={this.state.expandGenres} timeout="auto" unmountOnExit>
                         <br />
                           {this.state.genreOptions.map(option => (
-                            <Chip label={option} onDelete={() => {this.setState({genreOptions: this.state.genreOptions.filter(genres => genres !== option)})}}/>
+                            <Chip label={option} deleteIcon={<AddIcon/>} color="secondary" onDelete={() => {this.setState({genreOptions: this.state.genreOptions.filter(genres => genres !== option)})}}/>
                           ))}                             
                             <div className="formButtons" >
                               <Button color="secondary" onClick={() => {}}>Cancel</Button>
