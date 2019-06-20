@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from "axios";
 import AddIcon from '@material-ui/icons/Add';
+import Clear from '@material-ui/icons/Clear';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
 import { 
@@ -367,7 +368,9 @@ class App extends React.Component {
                     <div>
                       <br/>
                       <InputLabel>Genres</InputLabel>
-                      <AddIcon onClick={() => {this.setState({expandGenres: !this.state.expandGenres})}}/>
+                      <IconButton>
+                        <AddIcon onClick={() => {this.setState({expandGenres: !this.state.expandGenres})}}/>
+                      </IconButton>
                       <div>
                       {this.state.formsMovie.genres.map(selected => (
                         <Chip color="primary" label={selected} onDelete={() => {this.handleGenreRemove(selected)}}/>
