@@ -207,30 +207,28 @@ class App extends React.Component {
   // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
     let movies = this.state.movies;
+    let subMovie: Movie;      
+    let rolestoPush;
+      
+    if(values.roles === null) {
+      rolestoPush = this.state.movieRoles; }
+    else { rolestoPush = values.roles }
 
+    subMovie = {
+      title: values.title,
+      year: values.year,
+      runtime: values.runtime,
+      textSearch: values.title.toLowerCase(),
+      roles: rolestoPush,
+      genres: values.genres,
+      movieId: values.movieId,
+      id: values.movieId,
+      type: 'Movie',
+      key: '0',
+    };
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
-      let rolestoPush;
-      let subMovie: Movie;
-      
-      if(values.roles === null) {
-        rolestoPush = this.state.movieRoles; }
-      else { rolestoPush = values.roles }
-
-      subMovie = {
-        title: values.title,
-        year: values.year,
-        runtime: values.runtime,
-        textSearch: values.title.toLowerCase(),
-        roles: rolestoPush,
-        genres: values.genres,
-        movieId: values.movieId,
-        id: values.movieId,
-        type: 'Movie',
-        key: '0',
-      };
-
       axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
       .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
@@ -239,7 +237,7 @@ class App extends React.Component {
 
     // if adding a new movie, performs axios post
     if(this.state.formsTitle === "Add Movie") {
-      axios.post(cors + heliumApi + 'movies', values)
+      axios.post(cors + heliumApi + 'movies', subMovie)
       .then(action => this.setState({ postSuccessAlert: true, openForms: false, snackBarMessage:"Added " + values.title}))
       .catch(error => {console.log(error.response)})
       movies.push(values);
