@@ -72,7 +72,6 @@ interface IState {
   movieGenres: string[],
   textSearch: string,
   genreSelect: string[],
-  expandGenres: boolean,
   expandList: boolean,
 }
 
@@ -102,7 +101,6 @@ class App extends React.Component {
     movieGenres: [],
     textSearch: '',
     genreSelect: [],
-    expandGenres: false,
     expandList: false,
   };
 
@@ -184,7 +182,7 @@ class App extends React.Component {
 
   // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
-    this.setState({formsTitle: "Edit Movie", openForms: true, expandGenres: false, movieRoles: movie.roles, movieGenres: [],})
+    this.setState({formsTitle: "Edit Movie", openForms: true, movieRoles: movie.roles, movieGenres: [],})
     this.setState({formsMovie: {
       title: movie.title,
       year: movie.year,
@@ -243,7 +241,13 @@ class App extends React.Component {
     let movies = this.state.movies;
     let subMovie: Movie;      
     let rolestoPush;
-      
+    let allGenres = [];
+    let currentGenres = this.state.formsMovie.genres;
+    let newGenres = this.state.movieGenres;
+
+    allGenres = currentGenres.concat(newGenres);
+    console.log(allGenres);    
+
     if(values.roles === null) {
       rolestoPush = this.state.movieRoles; }
     else { rolestoPush = values.roles }
@@ -254,13 +258,13 @@ class App extends React.Component {
       runtime: values.runtime,
       textSearch: values.title.toLowerCase(),
       roles: rolestoPush,
-      genres: this.state.movieGenres,
+      genres: allGenres,
       movieId: values.movieId,
       id: values.movieId,
       type: 'Movie',
       key: '0',
     };
-    console.log(subMovie.genres);
+
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
@@ -408,7 +412,7 @@ class App extends React.Component {
                     </div>
                     <div>
                     {this.state.movieGenres.map(genre => (
-                      <Chip label={genre} />
+                      <Chip color="secondary" label={genre} />
                     ))}
                     </div>         
                     <div> 
@@ -498,7 +502,7 @@ class App extends React.Component {
         action={[<IconButton onClick={() => this.setState({requiredField: false})}><CloseIcon color="primary" /></IconButton>]} />
       </div>
       <div className="fab"> 
-        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({openForms: true, expandGenres: false,formsTitle:"Add Movie", movieGenres: [], formsMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0'}})} color="primary" >
+        <Fab className="addFAB" aria-label="addMovie" onClick={() => this.setState({openForms: true, formsTitle:"Add Movie", movieGenres: [], formsMovie: {id: '', year: '', runtime: 0, type: 'Movie', title: '', textSearch: '', roles: [], movieId: '', genres: [], key: '0'}})} color="primary" >
           <AddIcon />
         </Fab>
         <Fab aria-label="deleteMultipleMovie" color="secondary" onClick={(this.deleteMultipleMovies)} className="deleteFAB">
