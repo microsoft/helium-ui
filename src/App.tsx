@@ -403,17 +403,14 @@ class App extends React.Component {
                     <div>
                       <br/>
                       <InputLabel>Genres</InputLabel>
-                      <div>
-                      {/* {this.state.formsMovie.genres.map(selected => (
-                        <Chip color="primary" label={selected} onDelete={() => {this.handleGenreRemove(selected)}}/>
+                      {this.state.formsMovie.genres.map(currentGenre => (
+                        <Chip color="primary" label={currentGenre} />
                       ))}
-                         */}
-                      </div>
                     </div>
                     <div>
-                    {this.state.movieGenres.map(genre => (
-                      <Chip color="secondary" label={genre} />
-                    ))}
+                      {this.state.movieGenres.map(genre => (
+                        <Chip color="secondary" label={genre} />
+                      ))}
                     </div>         
                     <div> 
                       <br/>
