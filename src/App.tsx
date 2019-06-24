@@ -296,16 +296,20 @@ class App extends React.Component {
     } 
   }
 
-  handleGenreRemove = (selected: string) => {
+  handleCurrentGenreRemove = (selected: string) => {
+    console.log(selected);
+
+    // remove selected genre from formsmovie genre list
+    this.setState({formsMovie: {
+      genres: this.state.formsMovie.genres.filter(genres => genres !== selected),
+    }});
+  
+    console.log(this.state.formsMovie.genres)
+  }
+
+  handleNewGenreRemove = (selected: string) => {
     console.log(selected);
     
-    // this.setState({formsMovie: {
-    //   genres: this.state.formsMovie.genres.filter(genres => genres !== selected),
-    // }});
-
-    // //add back to list
-    // this.state.genreSelect.push(selected);
-  
     // remove selected genre from moviegenre list
     this.setState({movieGenres: this.state.movieGenres.filter(genre => genre !== selected)})
     console.log(this.state.formsMovie.genres)
@@ -314,13 +318,6 @@ class App extends React.Component {
   handleSelectGenre = (event: any) => {
     let selectedGenre = event.target.value;
     let newMovies = this.state.movieGenres;
-
-    // console.log("selected " + event.target.value);
-    // this.state.formsMovie.genres.push(selectedGenre);
-
-    // this.setState({formsMovie: {
-    //   genres: this.state.formsMovie.genres.filter(genres => genres !== selectedGenre),
-    // }});
 
     // add new genre to list
     newMovies.push(selectedGenre);
@@ -404,12 +401,12 @@ class App extends React.Component {
                       <br/>
                       <InputLabel>Genres</InputLabel>
                       {this.state.formsMovie.genres.map(currentGenre => (
-                        <Chip color="primary" label={currentGenre} />
+                        <Chip color="primary" label={currentGenre} onDelete={() => {this.handleCurrentGenreRemove(currentGenre)}}/>
                       ))}
                     </div>
                     <div>
                       {this.state.movieGenres.map(genre => (
-                        <Chip color="secondary" label={genre} />
+                        <Chip color="secondary" label={genre} onDelete={() => {this.handleNewGenreRemove(genre)}} />
                       ))}
                     </div>         
                     <div> 
@@ -418,19 +415,13 @@ class App extends React.Component {
                       <Select
                         multiple
                         value={this.state.genreSelect}
-                        // open={this.state.expandList}
-                           // onOpen={() => {this.setState({expandList: true})}}
-                        // onClose={() => {this.setState({expandList: false})}}
                         onChange={this.handleSelectGenre}
-                        input = {<Input />}            
-                      >
+                        input = {<Input />}>
                       <MenuItem><em>None</em></MenuItem>
                       {genreOptions.map(genre => (
                         <MenuItem key={genre} value={genre}>{genre}</MenuItem>
                       ))}
                       </Select>
-                    </div>
-                    <div>
                     </div>
                     <Field
                       required
@@ -439,10 +430,10 @@ class App extends React.Component {
                       type="text"
                       component={TextField}
                       margin="dense" />
-                      <div className="formButtons">
-                        <Button color="primary" onClick={() => this.setState({openForms: false})}>Cancel</Button>
-                        <Button color="primary" type="submit">Submit</Button>
-                      </div>
+                    <div className="formButtons">
+                      <Button color="primary" onClick={() => this.setState({openForms: false})}>Cancel</Button>
+                      <Button color="primary" type="submit">Submit</Button>
+                    </div>
                   </Form> )}/>
           </DialogContent>
         </Dialog> 
