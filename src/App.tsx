@@ -49,6 +49,9 @@ import { optionalCallExpression } from '@babel/types';
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
 
+const genreOptions = [ "History", "Horror", "Documentary", "Sport", "Family", "Thriller", "Music", "Sci-fi", "Musical", "Mystery", "Drama",
+"Biography", "Animation", "Action", "War", "Fantasy", "Adventure", "Comedy", "Crime", "Romance"];
+
 interface IState {
   movies: Movie[];
   actors: Actor[];
@@ -68,7 +71,7 @@ interface IState {
   movieRoles: string[],
   movieGenres: string[],
   textSearch: string,
-  genreOptions: string[],
+  genreSelect: string[],
   expandGenres: boolean,
   expandList: boolean,
 }
@@ -98,8 +101,7 @@ class App extends React.Component {
     movieRoles: [],
     movieGenres: [],
     textSearch: '',
-    genreOptions: [ "History", "Horror", "Documentary", "Sport", "Family", "Thriller", "Music", "Sci-fi", "Musical", "Mystery", "Drama",
-    "Biography", "Animation", "Action", "War", "Fantasy", "Adventure", "Comedy", "Crime", "Romance"],
+    genreSelect: [],
     expandGenres: false,
     expandList: false,
   };
@@ -182,17 +184,17 @@ class App extends React.Component {
 
   // edits an existing movie on menu "edit" button click
   editMovie = (movie: Movie) => {
-    this.setState({formsTitle: "Edit Movie", openForms: true, expandGenres: false, movieRoles: movie.roles})
+    this.setState({formsTitle: "Edit Movie", openForms: true, expandGenres: false, movieRoles: movie.roles, movieGenres: [],})
     this.setState({formsMovie: {
       title: movie.title,
       year: movie.year,
       runtime: movie.runtime,
       roles: '',
-      // genres: movie.genres,
+      genres: movie.genres,
       movieId: movie.movieId,
     }})
 
-    this.setState({movieGenres: movie.genres});
+    //this.setState({movieGenres: movie.genres});
   }
 
   deleteMultipleMovies = () => {
@@ -252,12 +254,13 @@ class App extends React.Component {
       runtime: values.runtime,
       textSearch: values.title.toLowerCase(),
       roles: rolestoPush,
-      genres: values.genres,
+      genres: this.state.movieGenres,
       movieId: values.movieId,
       id: values.movieId,
       type: 'Movie',
       key: '0',
     };
+    console.log(subMovie.genres);
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
@@ -297,7 +300,7 @@ class App extends React.Component {
     // }});
 
     // //add back to list
-    // this.state.genreOptions.push(selected);
+    // this.state.genreSelect.push(selected);
   
     // remove selected genre from moviegenre list
     this.setState({movieGenres: this.state.movieGenres.filter(genre => genre !== selected)})
@@ -306,6 +309,7 @@ class App extends React.Component {
 
   handleSelectGenre = (event: any) => {
     let selectedGenre = event.target.value;
+    let newMovies = this.state.movieGenres;
 
     // console.log("selected " + event.target.value);
     // this.state.formsMovie.genres.push(selectedGenre);
@@ -315,7 +319,9 @@ class App extends React.Component {
     // }});
 
     // add new genre to list
-    this.state.movieGenres.push(selectedGenre);
+    newMovies.push(selectedGenre);
+    this.setState(newMovies);
+    console.log("movie genres" + this.state.movieGenres);
   }
 
   render() { 
@@ -394,40 +400,36 @@ class App extends React.Component {
                       <br/>
                       <InputLabel>Genres</InputLabel>
                       <div>
-                      {this.state.movieGenres.map(selected => (
-                        <Chip color="primary" label={selected} onDelete={() => {this.handleGenreRemove(selected)}}/>
-                        ))}
                       {/* {this.state.formsMovie.genres.map(selected => (
                         <Chip color="primary" label={selected} onDelete={() => {this.handleGenreRemove(selected)}}/>
-                        ))} */}
-                        <br />
+                      ))}
+                         */}
                       </div>
-                    </div>   
+                    </div>
+                    <div>
+                    {this.state.movieGenres.map(genre => (
+                      <Chip label={genre} />
+                    ))}
+                    </div>         
                     <div> 
                       <br/>
-                      <InputLabel>Add Genres:</InputLabel>
-                      {/* <InputBase /> */}
+                      <InputLabel>Add</InputLabel>
                       <Select
-                        open={this.state.expandList}
-                        onOpen={() => {this.setState({expandList: true})}}
-                        onClose={() => {this.setState({expandList: false})}}
+                        multiple
+                        value={this.state.genreSelect}
+                        // open={this.state.expandList}
+                           // onOpen={() => {this.setState({expandList: true})}}
+                        // onClose={() => {this.setState({expandList: false})}}
                         onChange={this.handleSelectGenre}
-                        input = {<Input />}
-                        renderValue={selected => (
-                           <div>
-                             {(selected as string[]).map(value=>
-                                <Chip key={value} label={value}/>
-                              )}
-                          </div>
-                        )}
+                        input = {<Input />}            
                       >
-                      {this.state.genreOptions.map(genre => (
+                      <MenuItem><em>None</em></MenuItem>
+                      {genreOptions.map(genre => (
                         <MenuItem key={genre} value={genre}>{genre}</MenuItem>
                       ))}
                       </Select>
                     </div>
                     <div>
-
                     </div>
                     <Field
                       required
