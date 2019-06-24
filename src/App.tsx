@@ -15,27 +15,12 @@ import {
   Button,
   Fab,
   DialogContentText,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
   Chip,
   InputLabel,
-  Collapse,
-  List,
-  ListSubheader,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  FormControl,
   MenuItem,
   Select,
-  NativeSelect,
-  FormHelperText,
   Input,
-  InputBase,
 } from '@material-ui/core';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
 import './App.css';
 import { Formik, Field, Form, FormikProps, FormikActions } from 'formik';
 import { TextField } from 'formik-material-ui';
@@ -44,13 +29,24 @@ import ApplicationBar from './components/applicationBar';
 import MovieCard from './components/movieComp';
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
-import { optionalCallExpression } from '@babel/types';
+import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
+import { orange } from '@material-ui/core/colors';
+import { whileStatement } from '@babel/types';
 
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
 
 const genreOptions = [ "History", "Horror", "Documentary", "Sport", "Family", "Thriller", "Music", "Sci-fi", "Musical", "Mystery", "Drama",
 "Biography", "Animation", "Action", "War", "Fantasy", "Adventure", "Comedy", "Crime", "Romance"];
+
+const styles = createStyles({
+  chip: {
+    margin: 10,
+  },
+  chips: {
+  },
+  selected: {},
+})
 
 interface IState {
   movies: Movie[];
@@ -76,10 +72,12 @@ interface IState {
 }
 
 interface IProps {
-  editMovie: Movie;
+  editMovie?: Movie;
 }
 
-class App extends React.Component {
+export type AllProps = IProps & WithStyles<typeof styles>;
+
+class App extends React.Component<AllProps> {
   
   state: IState = {
     movies: [],
@@ -326,6 +324,7 @@ class App extends React.Component {
   }
 
   render() { 
+    const { classes } = this.props;
     return (
       <React.Fragment>
       <ApplicationBar handleSearchChange={this.searchToggle}/>
@@ -397,21 +396,20 @@ class App extends React.Component {
                       component={TextField}
                       fullWidth
                       margin="normal" />
-                    <div>
+                    <div className={classes.chips}>
                       <br/>
                       <InputLabel>Genres</InputLabel>
                       {this.state.formsMovie.genres.map(currentGenre => (
                         <Chip color="primary" label={currentGenre} onDelete={() => {this.handleCurrentGenreRemove(currentGenre)}}/>
-                      ))}
-                    </div>
-                    <div>
+                      ))}      
+                      <br />       
                       {this.state.movieGenres.map(genre => (
                         <Chip color="secondary" label={genre} onDelete={() => {this.handleNewGenreRemove(genre)}} />
                       ))}
                     </div>         
                     <div> 
                       <br/>
-                      <InputLabel>Add</InputLabel>
+                      <InputLabel>Add New Genre</InputLabel>
                       <Select
                         multiple
                         value={this.state.genreSelect}
@@ -419,7 +417,7 @@ class App extends React.Component {
                         input = {<Input />}>
                       <MenuItem><em>None</em></MenuItem>
                       {genreOptions.map(genre => (
-                        <MenuItem key={genre} value={genre}>{genre}</MenuItem>
+                        <MenuItem classes={{selected: classes.selected}} key={genre} value={genre}>{genre}</MenuItem>
                       ))}
                       </Select>
                     </div>
@@ -508,4 +506,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withStyles(styles)(App);
