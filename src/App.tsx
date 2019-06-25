@@ -238,9 +238,9 @@ class App extends React.Component {
     // if adding a new movie, performs axios post
     if(this.state.formsTitle === "Add Movie") {
       axios.post(cors + heliumApi + 'movies', subMovie)
-      .then(action => this.setState({ postSuccessAlert: true, openForms: false, snackBarMessage:"Added " + values.title}))
+      .then(action => this.setState({ postSuccessAlert: true, openForms: false, snackBarMessage:"Added " + subMovie.title}))
       .catch(error => {console.log(error.response)})
-      movies.push(values);
+      movies.push(subMovie);
       this.setState({movies})
     }
   }
