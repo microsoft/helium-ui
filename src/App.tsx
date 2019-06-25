@@ -190,7 +190,8 @@ class App extends React.Component<AllProps> {
       movieId: movie.movieId,
     }})
 
-    //this.setState({movieGenres: movie.genres});
+    this.setState({movies: this.state.movies.filter(item => item !== movie)})
+
   }
 
   deleteMultipleMovies = () => {
@@ -237,6 +238,7 @@ class App extends React.Component<AllProps> {
   // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
     let movies = this.state.movies;
+    let formsMovie = this.state.formsMovie;
     let subMovie: Movie;      
     let rolestoPush;
     let allGenres = [];
@@ -245,6 +247,7 @@ class App extends React.Component<AllProps> {
 
     allGenres = currentGenres.concat(newGenres);
     console.log(allGenres);    
+    console.log("current " + currentGenres);
 
     if(values.roles === null) {
       rolestoPush = this.state.movieRoles; }
@@ -263,21 +266,29 @@ class App extends React.Component<AllProps> {
       key: '0',
     };
 
+
+    // console.log(subMovie);
+    // console.log(this.state.formsMovie);
+
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
       axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
       .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
-      this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
+     // this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
+     // this.setState({movies: this.state.movies.filter(items => items !== this.state.formsMovie )})
+      console.log(values);
+      this.setState({movies: this.state.movies.filter(item => item !== values)})
+
     }
 
     // if adding a new movie, performs axios post
     if(this.state.formsTitle === "Add Movie") {
       axios.post(cors + heliumApi + 'movies', subMovie)
-      .then(action => this.setState({ postSuccessAlert: true, openForms: false, snackBarMessage:"Added " + values.title}))
+      .then(action => this.setState({ postSuccessAlert: true, openForms: false, snackBarMessage:"Added " + subMovie.genres}))
       .catch(error => {console.log(error.response)})
-      movies.push(values);
+      movies.push(subMovie);
       this.setState({movies})
     }
   }
