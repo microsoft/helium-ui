@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from "axios";
 import AddIcon from '@material-ui/icons/Add';
-import Clear from '@material-ui/icons/Clear';
+import Person from '@material-ui/icons/Person';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
 import { 
@@ -20,6 +20,11 @@ import {
   MenuItem,
   Select,
   Input,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
 } from '@material-ui/core';
 import './App.css';
 import { Formik, Field, Form, FormikProps, FormikActions } from 'formik';
@@ -30,9 +35,6 @@ import MovieCard from './components/movieComp';
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
 import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
-import { orange } from '@material-ui/core/colors';
-import { whileStatement } from '@babel/types';
-
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
 
@@ -43,9 +45,10 @@ const styles = createStyles({
   chip: {
     margin: 10,
   },
-  chips: {
+  personAvatar: {
+    margin: 0,
+    backgroundColor: "#556cd6",
   },
-  selected: {},
 })
 
 interface IState {
@@ -185,12 +188,12 @@ class App extends React.Component<AllProps> {
       title: movie.title,
       year: movie.year,
       runtime: movie.runtime,
-      roles: '',
+      roles: movie.roles,
       genres: movie.genres,
       movieId: movie.movieId,
     }})
-
-    this.setState({movies: this.state.movies.filter(item => item !== movie)})
+ 
+   this.setState({movies: this.state.movies.filter(item => item !== movie)})
 
   }
 
@@ -240,7 +243,6 @@ class App extends React.Component<AllProps> {
     let movies = this.state.movies;
     let formsMovie = this.state.formsMovie;
     let subMovie: Movie;      
-    let rolestoPush;
     let allGenres = [];
     let currentGenres = this.state.formsMovie.genres;
     let newGenres = this.state.movieGenres;
@@ -249,26 +251,18 @@ class App extends React.Component<AllProps> {
     console.log(allGenres);    
     console.log("current " + currentGenres);
 
-    if(values.roles === null) {
-      rolestoPush = this.state.movieRoles; }
-    else { rolestoPush = values.roles }
-
     subMovie = {
       title: values.title,
       year: values.year,
       runtime: values.runtime,
       textSearch: values.title.toLowerCase(),
-      roles: rolestoPush,
+      roles: values.roles,
       genres: allGenres,
       movieId: values.movieId,
       id: values.movieId,
       type: 'Movie',
       key: '0',
     };
-
-
-    // console.log(subMovie);
-    // console.log(this.state.formsMovie);
 
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
@@ -373,72 +367,91 @@ class App extends React.Component<AllProps> {
                   runtime: Yup.string()
                     .required('Runtime Required'),
                   movieId: Yup.string()
-                    .required('Required'),                                   
+                    .required('ID Required'),                                   
                 })}
                 onSubmit={this.submitMovie}
                 render={(formikBag: FormikProps<Movie>) => (
                   <Form autoComplete="on">
-                   <Field
-                      required
-                      name="title"
-                      label="Title"
-                      type="text"
-                      component={TextField}
-                      fullWidth
-                      margin="normal" />
-                    <Field 
-                      requiredField
-                      label="Year"
-                      name="year"
-                      type="text"
-                      component={TextField}
-                      margin="dense" />
-                    <Field 
-                      required
-                      label="runtime"
-                      name="runtime"
-                      type="number"
-                      component={TextField}
-                      margin="dense" />
-                    <Field
-                      name="roles"
-                      label="Roles"
-                      type="text"
-                      component={TextField}
-                      fullWidth
-                      margin="normal" />
-                    <div className={classes.chips}>
-                      <br/>
-                      <InputLabel>Genres</InputLabel>
-                      {this.state.formsMovie.genres.map(currentGenre => (
-                        <Chip color="primary" label={currentGenre} onDelete={() => {this.handleCurrentGenreRemove(currentGenre)}}/>
-                      ))}      
-                      <br />       
-                      {this.state.movieGenres.map(genre => (
-                        <Chip color="secondary" label={genre} onDelete={() => {this.handleNewGenreRemove(genre)}} />
-                      ))}
-                    </div>         
-                    <div> 
-                      <br/>
-                      <InputLabel>Add New Genre</InputLabel>
-                      <Select
-                        multiple
-                        value={this.state.genreSelect}
-                        onChange={this.handleSelectGenre}
-                        input = {<Input />}>
-                      <MenuItem><em>None</em></MenuItem>
-                      {genreOptions.map(genre => (
-                        <MenuItem classes={{selected: classes.selected}} key={genre} value={genre}>{genre}</MenuItem>
-                      ))}
-                      </Select>
-                    </div>
-                    <Field
-                      required
-                      name="movieId"
-                      label="Movie ID"
-                      type="text"
-                      component={TextField}
-                      margin="dense" />
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <InputLabel>Title</InputLabel>
+                        <Field
+                          required
+                          name="title"
+                          type="text"
+                          component={TextField}
+                          fullWidth
+                          margin="dense" />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <InputLabel>Movie ID</InputLabel>
+                        <Field
+                          required
+                          name="movieId"
+                          type="text"
+                          component={TextField}
+                          margin="dense" />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <InputLabel>Year</InputLabel>
+                        <Field 
+                          requiredField
+                          name="year"
+                          type="number"
+                          component={TextField}
+                          margin="dense" />
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <InputLabel>Runtime</InputLabel>
+                        <Field 
+                          required
+                          name="runtime"
+                          type="number"
+                          component={TextField}
+                          margin="dense" />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <InputLabel>Roles</InputLabel>
+                        {this.state.formsMovie.roles.map((item:any) => (
+                         <List>
+                          <ListItem>
+                            <ListItemAvatar>
+                              <Avatar className={classes.personAvatar}><Person/></Avatar>
+                            </ListItemAvatar>
+                            <ListItemText 
+                              primary={item.name}
+                              secondary={<Typography
+                                variant="body2"
+                                color="textPrimary">{item.category}</Typography>} />
+                          </ListItem>
+                        </List>
+                        ))}                    
+                      </Grid>
+                      <Grid item xs={12}>
+                        <div>
+                          <InputLabel>Genres</InputLabel>
+                          <br/>
+                          {this.state.formsMovie.genres.map(currentGenre => (
+                            <Chip color="primary" label={currentGenre} onDelete={() => {this.handleCurrentGenreRemove(currentGenre)}}/>
+                          ))}      
+                          <br />       
+                          {this.state.movieGenres.map(genre => (
+                            <Chip color="secondary" label={genre} onDelete={() => {this.handleNewGenreRemove(genre)}} />
+                          ))}
+                        </div>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Select
+                          multiple
+                          value={this.state.genreSelect}
+                          onChange={this.handleSelectGenre}
+                          input = {<Input />}>
+                        {genreOptions.map(genre => (
+                          <MenuItem key={genre} value={genre}>{genre}</MenuItem>
+                        ))}
+                        </Select>
+                      </Grid>
+                    </Grid>
                     <div className="formButtons">
                       <Button color="primary" onClick={() => this.setState({openForms: false})}>Cancel</Button>
                       <Button color="primary" type="submit">Submit</Button>
