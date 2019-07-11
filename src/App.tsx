@@ -190,9 +190,6 @@ class App extends React.Component<AllProps> {
       genres: movie.genres,
       movieId: movie.movieId,
     }})
- 
-   this.setState({movies: this.state.movies.filter(item => item !== movie)})
-
   }
 
   deleteMultipleMovies = () => {
@@ -230,8 +227,8 @@ class App extends React.Component<AllProps> {
   // handles edit on exisiting movie's form
   handleEdit = (subMovie: Movie) => {
     let movies = this.state.movies;
-    this.setState({snackBarMessage: "Edited " + this.state.formsMovie.title + " to " + subMovie.title, openForms: false, postSuccessAlert: true});
-  
+    this.setState({snackBarMessage: "Edited " + subMovie.title, openForms: false, postSuccessAlert: true});
+    
     movies.push(subMovie);
     this.setState({movies})
   }
@@ -239,7 +236,6 @@ class App extends React.Component<AllProps> {
   // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
     let movies = this.state.movies;
-    let formsMovie = this.state.formsMovie;
     let subMovie: Movie;      
     let allGenres = [];
     let currentGenres = this.state.formsMovie.genres;
@@ -271,7 +267,8 @@ class App extends React.Component<AllProps> {
      // this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
      // this.setState({movies: this.state.movies.filter(items => items !== this.state.formsMovie )})
       console.log(values);
-      this.setState({movies: this.state.movies.filter(item => item !== values)})
+
+      this.setState({movies: this.state.movies.filter(item => item!== values)})
 
     }
 
