@@ -71,7 +71,6 @@ interface IState {
   movieGenres: string[],
   textSearch: string,
   genreSelect: string[],
-  expandList: boolean,
 }
 
 interface IProps {
@@ -102,7 +101,6 @@ class App extends React.Component<AllProps> {
     movieGenres: [],
     textSearch: '',
     genreSelect: [],
-    expandList: false,
   };
 
   componentDidMount() {
