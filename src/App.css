@@ -24,6 +24,18 @@
   margin-left: 72%;
 }
 
+.addGenreButton {
+  display: right;
+}
+
+.addGenres {
+  background-color: #f5f5f5;
+}
+
+.genre-header {
+  display: grid;
+}
+
 .barHeader {
   margin: 5px;
 }

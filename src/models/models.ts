@@ -7,7 +7,7 @@ export type Movie = {
     year: string, 
     runtime: number,
     genres: string[], 
-    roles: string[],
+    roles: any,
     key: string,
 }
   
