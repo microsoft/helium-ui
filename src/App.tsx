@@ -230,7 +230,8 @@ class App extends React.Component<AllProps> {
     this.setState({snackBarMessage: "Edited " + subMovie.title, openForms: false, postSuccessAlert: true});
     
     movies.push(subMovie);
-    this.setState({movies})
+    this.setState({movies})   
+
   }
 
   // on forms submit button clicked
@@ -261,6 +262,8 @@ class App extends React.Component<AllProps> {
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
+      let formsMovie = this.state.formsMovie;
+
       axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
       .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
@@ -268,7 +271,8 @@ class App extends React.Component<AllProps> {
      // this.setState({movies: this.state.movies.filter(items => items !== this.state.formsMovie )})
       console.log(values);
 
-      this.setState({movies: this.state.movies.filter(item => item!== values)})
+      //this.setState({movies: this.state.movies.filter(item => item!== values)})
+      this.setState({movies: this.state.movies.filter(item => item.movieId !== formsMovie.movieId)})
 
     }
 
@@ -320,7 +324,7 @@ class App extends React.Component<AllProps> {
     // add new genre to list
     newMovies.push(selectedGenre);
     this.setState(newMovies);
-    console.log("movie genres" + this.state.movieGenres);
+    console.log("movie genres " + this.state.movieGenres + ", ");
   }
 
   render() { 
