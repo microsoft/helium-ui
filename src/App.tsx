@@ -191,7 +191,7 @@ class App extends React.Component<AllProps> {
       movieId: movie.movieId,
     }})
  
-   this.setState({movies: this.state.movies.filter(item => item !== movie)})
+   // this.setState({movies: this.state.movies.filter(item => item != movie)})
 
   }
 
@@ -229,17 +229,25 @@ class App extends React.Component<AllProps> {
 
   // handles edit on exisiting movie's form
   handleEdit = (subMovie: Movie) => {
-    let movies = this.state.movies;
+    let movies = this.state.movies.slice();
     this.setState({snackBarMessage: "Edited " + this.state.formsMovie.title + " to " + subMovie.title, openForms: false, postSuccessAlert: true});
   
-    movies.push(subMovie);
+    // movies.push(subMovie);
+    for (let i = 0; i < movies.length; i++) {
+      if (movies[i].movieId === subMovie.movieId) {
+        movies[i].year = subMovie.year;
+        movies[i].title = subMovie.title;
+        movies[i].runtime = subMovie.runtime;
+        movies[i].genres = subMovie.genres;
+        movies[i].roles = subMovie.roles;
+      }
+    }
     this.setState({movies})
   }
 
   // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
     let movies = this.state.movies;
-    let formsMovie = this.state.formsMovie;
     let subMovie: Movie;      
     let allGenres = [];
     let currentGenres = this.state.formsMovie.genres;
@@ -271,7 +279,6 @@ class App extends React.Component<AllProps> {
      // this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
      // this.setState({movies: this.state.movies.filter(items => items !== this.state.formsMovie )})
       console.log(values);
-      this.setState({movies: this.state.movies.filter(item => item !== values)})
 
     }
 
@@ -371,7 +378,7 @@ class App extends React.Component<AllProps> {
                 render={(formikBag: FormikProps<Movie>) => (
                   <Form autoComplete="on">
                     <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item key={"title"} xs={12} sm={6}>
                         <InputLabel>Title</InputLabel>
                         <Field
                           required
@@ -381,7 +388,7 @@ class App extends React.Component<AllProps> {
                           fullWidth
                           margin="dense" />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item key={"movieId"} xs={12} sm={6}>
                         <InputLabel>Movie ID</InputLabel>
                         <Field
                           required
@@ -390,16 +397,16 @@ class App extends React.Component<AllProps> {
                           component={TextField}
                           margin="dense" />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item key={"year"} xs={12} sm={6}>
                         <InputLabel>Year</InputLabel>
                         <Field 
-                          requiredField
+                          required
                           name="year"
                           type="number"
                           component={TextField}
                           margin="dense" />
                       </Grid>
-                      <Grid item xs={12} sm={6}>
+                      <Grid item key={"runtime"} xs={12} sm={6}>
                         <InputLabel>Runtime</InputLabel>
                         <Field 
                           required
@@ -408,7 +415,7 @@ class App extends React.Component<AllProps> {
                           component={TextField}
                           margin="dense" />
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid item key={"roles"} xs={12}>
                         <InputLabel>Roles</InputLabel>
                         {this.state.formsMovie.roles.map((item:any) => (
                          <List>
@@ -425,7 +432,7 @@ class App extends React.Component<AllProps> {
                         </List>
                         ))}                    
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid item key={"genres"} xs={12}>
                         <div>
                           <InputLabel>Genres</InputLabel>
                           <br/>
@@ -438,7 +445,7 @@ class App extends React.Component<AllProps> {
                           ))}
                         </div>
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid item key={"genre"} xs={12}>
                         <Select
                           multiple
                           value={this.state.genreSelect}
