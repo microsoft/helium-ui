@@ -230,7 +230,6 @@ class App extends React.Component<AllProps> {
       }
     }
     this.setState({movies})
-
   }
 
   // on forms submit button clicked
@@ -292,14 +291,9 @@ class App extends React.Component<AllProps> {
   }
 
   handleCurrentGenreRemove = (selected: string) => {
-    console.log(selected);
+    this.setState({movieGenres: this.state.movieGenres.filter(genre => genre !== selected)})
+    this.state.formsMovie.genres.pop();
 
-    // remove selected genre from formsmovie genre list
-    this.setState({formsMovie: {
-      genres: this.state.formsMovie.genres.filter(genres => genres !== selected),
-    }});
-  
-    console.log(this.state.formsMovie.genres)
   }
 
   handleNewGenreRemove = (selected: string) => {
