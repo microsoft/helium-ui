@@ -258,7 +258,7 @@ class App extends React.Component<AllProps> {
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
-      axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
+      axios.put(cors + heliumApi + 'movies/' + values.movieId, subMovie)
       .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
 
