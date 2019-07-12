@@ -35,6 +35,7 @@ import MovieCard from './components/movieComp';
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
 import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
+
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
 
@@ -48,6 +49,10 @@ const styles = createStyles({
   personAvatar: {
     margin: 0,
     backgroundColor: "#556cd6",
+  },
+  drawer: {
+    width: 240,
+    flexShrink: 0,
   },
 })
 
@@ -381,20 +386,23 @@ class App extends React.Component<AllProps> {
                       </Grid>
                       <Grid item xs={12}>
                         <InputLabel>Roles</InputLabel>
-                        {this.state.formsMovie.roles.map((item:any) => (
-                         <List>
-                          <ListItem>
-                            <ListItemAvatar>
-                              <Avatar className={classes.personAvatar}><Person/></Avatar>
-                            </ListItemAvatar>
-                            <ListItemText 
-                              primary={item.name}
-                              secondary={<Typography
-                                variant="body2"
-                                color="textPrimary">{item.category}</Typography>} />
-                          </ListItem>
-                        </List>
-                        ))}                    
+                        <div className="roleScroll">
+                          {this.state.formsMovie.roles.map((item:any) => (
+                            <List>
+                              <ListItem>
+                                <ListItemAvatar>
+                                  <Avatar className={classes.personAvatar}><Person/></Avatar>
+                                </ListItemAvatar>
+                                <ListItemText 
+                                  primary={item.name}
+                                  secondary={<Typography
+                                    variant="body2"
+                                    color="textPrimary">{item.category}</Typography>} />
+                              </ListItem>
+                            </List>
+                            ))}
+                         
+                        </div>                    
                       </Grid>
                       <Grid item xs={12}>
                         <div>
