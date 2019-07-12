@@ -108,27 +108,18 @@ class App extends React.Component<AllProps> {
     // grab genre data from api
     axios.get(cors + heliumApi + 'genres').then(response => {
       const genreData: Genre[] = response.data
-      this.setState({
-        genres: genreData
-      })
+      this.setState({genres: genreData})
     })
-
     // grab movie data from api
     axios.get(cors + heliumApi + 'movies').then(response => {
       const moviesData: Movie[] = response.data
-      this.setState({
-        movies: moviesData
-      })
+      this.setState({movies: moviesData})
     })
-
     // grab actor data from api
     axios.get(cors + heliumApi + 'actors').then(response => {
       const actorsData: Actor[] = response.data
-      this.setState({
-        actors: actorsData
-      })
+      this.setState({actors: actorsData})
     })
-
     .catch(error => {
       console.log(error);
     });
@@ -226,11 +217,19 @@ class App extends React.Component<AllProps> {
 
   // handles edit on exisiting movie's form
   handleEdit = (subMovie: Movie) => {
-    let movies = this.state.movies;
+    let movies = this.state.movies.slice();
     this.setState({snackBarMessage: "Edited " + subMovie.title, openForms: false, postSuccessAlert: true});
     
-    movies.push(subMovie);
-    this.setState({movies})   
+    for (let i = 0; i < movies.length; i++) {
+      if (movies[i].movieId === subMovie.movieId) {
+        movies[i].year = subMovie.year;
+        movies[i].title = subMovie.title;
+        movies[i].runtime = subMovie.runtime;
+        movies[i].genres = subMovie.genres;
+        movies[i].roles = subMovie.roles;
+      }
+    }
+    this.setState({movies})
 
   }
 
@@ -267,12 +266,6 @@ class App extends React.Component<AllProps> {
       axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
       .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
-     // this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
-     // this.setState({movies: this.state.movies.filter(items => items !== this.state.formsMovie )})
-      console.log(values);
-
-      //this.setState({movies: this.state.movies.filter(item => item!== values)})
-      this.setState({movies: this.state.movies.filter(item => item.movieId !== formsMovie.movieId)})
 
     }
 
