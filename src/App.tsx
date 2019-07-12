@@ -201,17 +201,13 @@ class App extends React.Component<AllProps> {
   };
 
   checkBoxToggle = (id: string, checkBox: boolean) => {
-    console.log(id);
     // remove card from array of deleted movies
     if(checkBox === true) {
       this.state.deleteMovies.pop();
-      console.log(this.state.deleteMovies);
     }
-
     // add card to array of deleted movies
     if(checkBox === false) {
       this.state.deleteMovies.push(id);
-      console.log(this.state.deleteMovies);
     }
   }
 
@@ -235,16 +231,13 @@ class App extends React.Component<AllProps> {
   // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
     let movies = this.state.movies;
-    let subMovie: Movie;      
     let allGenres = [];
     let currentGenres = this.state.formsMovie.genres;
     let newGenres = this.state.movieGenres;
 
     allGenres = currentGenres.concat(newGenres);
-    console.log(allGenres);    
-    console.log("current " + currentGenres);
 
-    subMovie = {
+    let subMovie: Movie = {
       title: values.title,
       year: values.year,
       runtime: values.runtime,
@@ -260,8 +253,6 @@ class App extends React.Component<AllProps> {
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
-      let formsMovie = this.state.formsMovie;
-
       axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
       .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
@@ -282,23 +273,16 @@ class App extends React.Component<AllProps> {
   handleSearchFilter = (movie: Movie) => {
     let input = this.state.textSearch;
 
-    if(this.state.textSearch === '') {
-      return true;
-    }
-    if(movie.title.toLowerCase().includes(input)){
-      return movie;
-    } 
+    if(this.state.textSearch === '') {return true}
+    if(movie.title.toLowerCase().includes(input)){return movie} 
   }
 
   handleCurrentGenreRemove = (selected: string) => {
     this.setState({movieGenres: this.state.movieGenres.filter(genre => genre !== selected)})
-    this.state.formsMovie.genres.pop();
-
+    this.state.formsMovie.genres.pop()
   }
 
-  handleNewGenreRemove = (selected: string) => {
-    console.log(selected);
-    
+  handleNewGenreRemove = (selected: string) => {    
     // remove selected genre from moviegenre list
     this.setState({movieGenres: this.state.movieGenres.filter(genre => genre !== selected)})
     console.log(this.state.formsMovie.genres)
@@ -311,7 +295,6 @@ class App extends React.Component<AllProps> {
     // add new genre to list
     newMovies.push(selectedGenre);
     this.setState(newMovies);
-    console.log("movie genres " + this.state.movieGenres + ", ");
   }
 
   render() { 
