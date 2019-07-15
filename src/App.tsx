@@ -54,6 +54,9 @@ const styles = createStyles({
     width: 240,
     flexShrink: 0,
   },
+  newChip: {
+    backgroundColor: "#FFC730"
+  },
 })
 
 interface IState {
@@ -413,7 +416,7 @@ class App extends React.Component<AllProps> {
                           ))}      
                           <br />       
                           {this.state.movieGenres.map(genre => (
-                            <Chip color="secondary" label={genre} onDelete={() => {this.handleNewGenreRemove(genre)}} />
+                            <Chip className={classes.newChip} label={genre} onDelete={() => {this.handleNewGenreRemove(genre)}} />
                           ))}
                         </div>
                       </Grid>
