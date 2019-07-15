@@ -35,6 +35,7 @@ import MovieCard from './components/movieComp';
 import { Movie, Actor, Genre } from './models/models';
 import * as Yup from 'yup';
 import { createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
+
 const heliumApi = 'https://heliumint.azurewebsites.net/api/';
 const cors = 'https://cors-anywhere.herokuapp.com/';
 
@@ -48,6 +49,13 @@ const styles = createStyles({
   personAvatar: {
     margin: 0,
     backgroundColor: "#556cd6",
+  },
+  drawer: {
+    width: 240,
+    flexShrink: 0,
+  },
+  newChip: {
+    backgroundColor: "#FFC730"
   },
 })
 
@@ -108,27 +116,18 @@ class App extends React.Component<AllProps> {
     // grab genre data from api
     axios.get(cors + heliumApi + 'genres').then(response => {
       const genreData: Genre[] = response.data
-      this.setState({
-        genres: genreData
-      })
+      this.setState({genres: genreData})
     })
-
     // grab movie data from api
     axios.get(cors + heliumApi + 'movies').then(response => {
       const moviesData: Movie[] = response.data
-      this.setState({
-        movies: moviesData
-      })
+      this.setState({movies: moviesData})
     })
-
     // grab actor data from api
     axios.get(cors + heliumApi + 'actors').then(response => {
       const actorsData: Actor[] = response.data
-      this.setState({
-        actors: actorsData
-      })
+      this.setState({actors: actorsData})
     })
-
     .catch(error => {
       console.log(error);
     });
@@ -190,9 +189,6 @@ class App extends React.Component<AllProps> {
       genres: movie.genres,
       movieId: movie.movieId,
     }})
- 
-   this.setState({movies: this.state.movies.filter(item => item !== movie)})
-
   }
 
   deleteMultipleMovies = () => {
@@ -213,43 +209,43 @@ class App extends React.Component<AllProps> {
   };
 
   checkBoxToggle = (id: string, checkBox: boolean) => {
-    console.log(id);
     // remove card from array of deleted movies
     if(checkBox === true) {
       this.state.deleteMovies.pop();
-      console.log(this.state.deleteMovies);
     }
-
     // add card to array of deleted movies
     if(checkBox === false) {
       this.state.deleteMovies.push(id);
-      console.log(this.state.deleteMovies);
     }
   }
 
   // handles edit on exisiting movie's form
   handleEdit = (subMovie: Movie) => {
-    let movies = this.state.movies;
-    this.setState({snackBarMessage: "Edited " + this.state.formsMovie.title + " to " + subMovie.title, openForms: false, postSuccessAlert: true});
-  
-    movies.push(subMovie);
+    let movies = this.state.movies.slice();
+    this.setState({snackBarMessage: "Edited " + subMovie.title, openForms: false, postSuccessAlert: true});
+    
+    for (let i = 0; i < movies.length; i++) {
+      if (movies[i].movieId === subMovie.movieId) {
+        movies[i].year = subMovie.year;
+        movies[i].title = subMovie.title;
+        movies[i].runtime = subMovie.runtime;
+        movies[i].genres = subMovie.genres;
+        movies[i].roles = subMovie.roles;
+      }
+    }
     this.setState({movies})
   }
 
   // on forms submit button clicked
   submitMovie = (values: Movie, action:FormikActions<Movie>) => {
     let movies = this.state.movies;
-    let formsMovie = this.state.formsMovie;
-    let subMovie: Movie;      
     let allGenres = [];
     let currentGenres = this.state.formsMovie.genres;
     let newGenres = this.state.movieGenres;
 
     allGenres = currentGenres.concat(newGenres);
-    console.log(allGenres);    
-    console.log("current " + currentGenres);
 
-    subMovie = {
+    let subMovie: Movie = {
       title: values.title,
       year: values.year,
       runtime: values.runtime,
@@ -265,13 +261,9 @@ class App extends React.Component<AllProps> {
     // if editing a movie, perform axios PUT
     if(this.state.formsTitle === "Edit Movie")
     {
-      axios.put(cors + heliumApi + 'movies/' + values.id, subMovie)
+      axios.put(cors + heliumApi + 'movies/' + values.movieId, subMovie)
       .then(action => {this.handleEdit(subMovie)})
       .catch(error => {console.log(error.response)})
-     // this.setState({movies: this.state.movies.filter(items => items.movieId !== this.state.formsMovie.movieId )})
-     // this.setState({movies: this.state.movies.filter(items => items !== this.state.formsMovie )})
-      console.log(values);
-      this.setState({movies: this.state.movies.filter(item => item !== values)})
 
     }
 
@@ -289,28 +281,16 @@ class App extends React.Component<AllProps> {
   handleSearchFilter = (movie: Movie) => {
     let input = this.state.textSearch;
 
-    if(this.state.textSearch === '') {
-      return true;
-    }
-    if(movie.title.toLowerCase().includes(input)){
-      return movie;
-    } 
+    if(this.state.textSearch === '') {return true}
+    if(movie.title.toLowerCase().includes(input)){return movie} 
   }
 
   handleCurrentGenreRemove = (selected: string) => {
-    console.log(selected);
-
-    // remove selected genre from formsmovie genre list
-    this.setState({formsMovie: {
-      genres: this.state.formsMovie.genres.filter(genres => genres !== selected),
-    }});
-  
-    console.log(this.state.formsMovie.genres)
+    this.setState({movieGenres: this.state.movieGenres.filter(genre => genre !== selected)})
+    this.state.formsMovie.genres.pop()
   }
 
-  handleNewGenreRemove = (selected: string) => {
-    console.log(selected);
-    
+  handleNewGenreRemove = (selected: string) => {    
     // remove selected genre from moviegenre list
     this.setState({movieGenres: this.state.movieGenres.filter(genre => genre !== selected)})
     console.log(this.state.formsMovie.genres)
@@ -323,7 +303,6 @@ class App extends React.Component<AllProps> {
     // add new genre to list
     newMovies.push(selectedGenre);
     this.setState(newMovies);
-    console.log("movie genres" + this.state.movieGenres);
   }
 
   render() { 
@@ -410,20 +389,23 @@ class App extends React.Component<AllProps> {
                       </Grid>
                       <Grid item xs={12}>
                         <InputLabel>Roles</InputLabel>
-                        {this.state.formsMovie.roles.map((item:any) => (
-                         <List>
-                          <ListItem>
-                            <ListItemAvatar>
-                              <Avatar className={classes.personAvatar}><Person/></Avatar>
-                            </ListItemAvatar>
-                            <ListItemText 
-                              primary={item.name}
-                              secondary={<Typography
-                                variant="body2"
-                                color="textPrimary">{item.category}</Typography>} />
-                          </ListItem>
-                        </List>
-                        ))}                    
+                        <div className="roleScroll">
+                          {this.state.formsMovie.roles.map((item:any) => (
+                            <List>
+                              <ListItem>
+                                <ListItemAvatar>
+                                  <Avatar className={classes.personAvatar}><Person/></Avatar>
+                                </ListItemAvatar>
+                                <ListItemText 
+                                  primary={item.name}
+                                  secondary={<Typography
+                                    variant="body2"
+                                    color="textPrimary">{item.category}</Typography>} />
+                              </ListItem>
+                            </List>
+                            ))}
+                         
+                        </div>                    
                       </Grid>
                       <Grid item xs={12}>
                         <div>
@@ -434,7 +416,7 @@ class App extends React.Component<AllProps> {
                           ))}      
                           <br />       
                           {this.state.movieGenres.map(genre => (
-                            <Chip color="secondary" label={genre} onDelete={() => {this.handleNewGenreRemove(genre)}} />
+                            <Chip className={classes.newChip} label={genre} onDelete={() => {this.handleNewGenreRemove(genre)}} />
                           ))}
                         </div>
                       </Grid>

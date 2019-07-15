@@ -68,7 +68,6 @@ class movieComp extends React.Component<IProps> {
 
     editMovie = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
         this.props.editMovie(this.state.movie);
-        console.log(this.state.movie)
     }
 
     toggleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
